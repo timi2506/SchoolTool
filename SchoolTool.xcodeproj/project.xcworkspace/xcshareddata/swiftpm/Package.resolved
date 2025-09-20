@@ -1,0 +1,24 @@
+{
+  "originHash" : "b61dc94cd848d8fb1790a3e9a3fbfc21920f73974a401c26cb5dd88c8bc3272f",
+  "pins" : [
+    {
+      "identity" : "drops",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/omaralbeik/Drops.git",
+      "state" : {
+        "revision" : "a183ee6f79f21c940092a19c2cba756555422371",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker.git",
+      "state" : {
+        "revision" : "8bb08c982235b8e601bc500a41e770d7e198759b",
+        "version" : "1.6.2"
+      }
+    }
+  ],
+  "version" : 3
+}

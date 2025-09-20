@@ -2,20 +2,37 @@
 //  ContentView.swift
 //  SchoolTool
 //
-//  Created by Tim Schuchardt on 17.09.25.
+//  Created by Tim on 17.09.25.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var timeTableManager = TimeTableManager.shared
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            PDFToolView()
+                .tabItem {
+                    Label("PDF Tool", systemImage: "document")
+                }
+            TimeTableView()
+                .tabItem {
+                    Label("Time Table", systemImage: "calendar")
+                }
+            #if os(iOS)
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+            #endif
         }
-        .padding()
+        #if os(macOS)
+        .tabViewStyle(.sidebarAdaptable)
+        #endif
+        .onAppear {
+            timeTableManager.sendToAppleWatch()
+        }
     }
 }
 

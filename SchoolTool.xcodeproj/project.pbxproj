@@ -6,20 +6,78 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = 8D2CE20E2E7C42E9006962B4 /* Drops */; };
+		8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DACA6082E7E89D100E68BED /* SymbolPicker */; };
+		8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8DF42F162E7EE74A00DB91D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8DDA96012E7AA2DD0015D242 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DF42F0D2E7EE74900DB91D8;
+			remoteInfo = "SchoolTool Watch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DACA61C2E7E9F6500E68BED /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		8DDA96092E7AA2DD0015D242 /* SchoolTool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SchoolTool.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SchoolTool Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8DACA6612E7EA63600E68BED /* Exceptions for "SchoolTool" folder in "SchoolTool" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8DDA96082E7AA2DD0015D242 /* SchoolTool */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8DDA960B2E7AA2DD0015D242 /* SchoolTool */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8DACA6612E7EA63600E68BED /* Exceptions for "SchoolTool" folder in "SchoolTool" target */,
+			);
 			path = SchoolTool;
+			sourceTree = "<group>";
+		};
+		8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "SchoolTool Watch Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		8DDA96062E7AA2DD0015D242 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */,
+				8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DF42F0B2E7EE74900DB91D8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				8DDA960B2E7AA2DD0015D242 /* SchoolTool */,
+				8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
 				8DDA960A2E7AA2DD0015D242 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				8DDA96092E7AA2DD0015D242 /* SchoolTool.app */,
+				8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,19 +115,45 @@
 				8DDA96052E7AA2DD0015D242 /* Sources */,
 				8DDA96062E7AA2DD0015D242 /* Frameworks */,
 				8DDA96072E7AA2DD0015D242 /* Resources */,
+				8DACA61C2E7E9F6500E68BED /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8DF42F172E7EE74A00DB91D8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8DDA960B2E7AA2DD0015D242 /* SchoolTool */,
 			);
 			name = SchoolTool;
 			packageProductDependencies = (
+				8D2CE20E2E7C42E9006962B4 /* Drops */,
+				8DACA6082E7E89D100E68BED /* SymbolPicker */,
 			);
 			productName = SchoolTool;
 			productReference = 8DDA96092E7AA2DD0015D242 /* SchoolTool.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8DF42F0D2E7EE74900DB91D8 /* SchoolTool Watch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8DF42F1B2E7EE74A00DB91D8 /* Build configuration list for PBXNativeTarget "SchoolTool Watch Watch App" */;
+			buildPhases = (
+				8DF42F0A2E7EE74900DB91D8 /* Sources */,
+				8DF42F0B2E7EE74900DB91D8 /* Frameworks */,
+				8DF42F0C2E7EE74900DB91D8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
+			);
+			name = "SchoolTool Watch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "SchoolTool Watch Watch App";
+			productReference = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -83,6 +169,9 @@
 					8DDA96082E7AA2DD0015D242 = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					8DF42F0D2E7EE74900DB91D8 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 				};
 			};
 			buildConfigurationList = 8DDA96042E7AA2DD0015D242 /* Build configuration list for PBXProject "SchoolTool" */;
@@ -94,18 +183,30 @@
 			);
 			mainGroup = 8DDA96002E7AA2DD0015D242;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8D2CE20D2E7C42E9006962B4 /* XCRemoteSwiftPackageReference "Drops" */,
+				8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8DDA960A2E7AA2DD0015D242 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				8DDA96082E7AA2DD0015D242 /* SchoolTool */,
+				8DF42F0D2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8DDA96072E7AA2DD0015D242 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DF42F0C2E7EE74900DB91D8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +223,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8DF42F0A2E7EE74900DB91D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8DF42F172E7EE74A00DB91D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DF42F0D2E7EE74900DB91D8 /* SchoolTool Watch Watch App */;
+			targetProxy = 8DF42F162E7EE74A00DB91D8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8DDA96122E7AA2E00015D242 /* Debug */ = {
@@ -250,30 +366,55 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = SchoolTool/SchoolTool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SchoolTool/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save Extracted Pages to Photos";
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 15;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -282,30 +423,124 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = SchoolTool/SchoolTool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SchoolTool/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save Extracted Pages to Photos";
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 15;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8DF42F192E7EE74A00DB91D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SchoolTool;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.timi2506.SchoolTool;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11;
+			};
+			name = Debug;
+		};
+		8DF42F1A2E7EE74A00DB91D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SchoolTool;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.timi2506.SchoolTool;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11;
 			};
 			name = Release;
 		};
@@ -330,7 +565,48 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8DF42F1B2E7EE74A00DB91D8 /* Build configuration list for PBXNativeTarget "SchoolTool Watch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DF42F192E7EE74A00DB91D8 /* Debug */,
+				8DF42F1A2E7EE74A00DB91D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8D2CE20D2E7C42E9006962B4 /* XCRemoteSwiftPackageReference "Drops" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/omaralbeik/Drops.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.0;
+			};
+		};
+		8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8D2CE20E2E7C42E9006962B4 /* Drops */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D2CE20D2E7C42E9006962B4 /* XCRemoteSwiftPackageReference "Drops" */;
+			productName = Drops;
+		};
+		8DACA6082E7E89D100E68BED /* SymbolPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8DDA96012E7AA2DD0015D242 /* Project object */;
 }

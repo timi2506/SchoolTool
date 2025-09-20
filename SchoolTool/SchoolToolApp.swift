@@ -2,7 +2,7 @@
 //  SchoolToolApp.swift
 //  SchoolTool
 //
-//  Created by Tim Schuchardt on 17.09.25.
+//  Created by Tim on 17.09.25.
 //
 
 import SwiftUI
@@ -13,5 +13,10 @@ struct SchoolToolApp: App {
         WindowGroup {
             ContentView()
         }
+        #if os(macOS)
+        Settings {
+            SettingsView()
+        }
+        #endif
     }
 }
