@@ -29,10 +29,11 @@ struct ContentView: View {
         }
         #if os(macOS)
         .tabViewStyle(.sidebarAdaptable)
-        #endif
+        #elseif os(iOS)
         .onAppear {
             timeTableManager.sendToAppleWatch()
         }
+        #endif
     }
 }
 

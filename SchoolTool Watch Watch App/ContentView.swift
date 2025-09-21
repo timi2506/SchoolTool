@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
     @StateObject var manager = TimeTableManager.shared
@@ -57,6 +58,11 @@ struct ContentView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.blue)
+                        Button("Refresh Widgets") {
+                            WidgetCenter.shared.reloadAllTimelines()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.purple)
                         Button("Reset App") {
                             resetAppAlert.toggle()
                         }

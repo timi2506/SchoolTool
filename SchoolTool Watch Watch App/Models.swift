@@ -203,6 +203,14 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 UserDefaults.shared.set(encodedJSON, forKey: "schoolToolSchedule")
                 self.awaitingSync = false
             }
+        } else if let request = message["request"] as? String {
+            DispatchQueue.main.async {
+                switch request {
+                    case "appVersionString": self.sendVersionString()
+                    default:
+                        print("Unknown Request")
+                }
+            }
         }
     }
     
@@ -213,6 +221,40 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 self.schedule = decodedSchedule
                 UserDefaults.shared.set(encodedJSON, forKey: "schoolToolSchedule")
                 self.awaitingSync = false
+            }
+        } else if let request = userInfo["request"] as? String {
+            DispatchQueue.main.async {
+                switch request {
+                    case "appVersionString": self.sendVersionString()
+                    default:
+                        print("Unknown Request")
+                }
+            }
+        }
+    }
+    
+    func sendVersionString() {
+        let info = Bundle.main.infoDictionary
+        let version = (info?["CFBundleShortVersionString"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let build = (info?["CFBundleVersion"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let base = (version?.isEmpty == false) ? version! : "Unknown"
+        let formatted: String
+        if let build = build, !build.isEmpty {
+            formatted = "\(base)(\(build))"
+        } else {
+            formatted = base
+        }
+
+        let payload: [String: Any] = ["appVersionString": formatted]
+
+        if WCSession.isSupported() {
+            if WCSession.default.isReachable {
+                WCSession.default.sendMessage(payload, replyHandler: nil) { error in
+                    print("Failed to send appVersionString:", error.localizedDescription)
+                }
+            } else {
+                WCSession.default.transferUserInfo(payload)
             }
         }
     }

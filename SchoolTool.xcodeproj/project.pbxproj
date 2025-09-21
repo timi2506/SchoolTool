@@ -8,11 +8,31 @@
 
 /* Begin PBXBuildFile section */
 		8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = 8D2CE20E2E7C42E9006962B4 /* Drops */; };
+		8D4927EB2E7F1EDD00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
+		8D4927ED2E7F1EDD00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
+		8D4927F82E7F1EE100CFFCCA /* TimeTable WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8D4928082E7F497C00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
+		8D4928092E7F497C00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
+		8D4928142E7F498000CFFCCA /* TimeTable Widget WatchOSExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DACA6082E7E89D100E68BED /* SymbolPicker */; };
-		8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8D4927F62E7F1EE100CFFCCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8DDA96012E7AA2DD0015D242 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D4927E72E7F1EDD00CFFCCA;
+			remoteInfo = "TimeTable WidgetExtension";
+		};
+		8D4928122E7F498000CFFCCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8DDA96012E7AA2DD0015D242 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D4928062E7F497C00CFFCCA;
+			remoteInfo = "TimeTable Widget WatchOSExtension";
+		};
 		8DF42F162E7EE74A00DB91D8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8DDA96012E7AA2DD0015D242 /* Project object */;
@@ -23,6 +43,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8D4927F92E7F1EE100CFFCCA /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8D4927F82E7F1EE100CFFCCA /* TimeTable WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D4928192E7F498000CFFCCA /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8D4928142E7F498000CFFCCA /* TimeTable Widget WatchOSExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DACA61C2E7E9F6500E68BED /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -37,21 +79,60 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TimeTable WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TimeTable Widget WatchOSExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TimeTable WidgetExtension.entitlements"; sourceTree = "<group>"; };
+		8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TimeTable Widget WatchOSExtension.entitlements"; sourceTree = "<group>"; };
 		8DDA96092E7AA2DD0015D242 /* SchoolTool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SchoolTool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SchoolTool Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8D4927FD2E7F1EE100CFFCCA /* Exceptions for "TimeTable Widget" folder in "TimeTable WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8D4927E72E7F1EDD00CFFCCA /* TimeTable WidgetExtension */;
+		};
+		8D4928182E7F498000CFFCCA /* Exceptions for "TimeTable Widget WatchOS" folder in "TimeTable Widget WatchOSExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8D4928062E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension */;
+		};
 		8DACA6612E7EA63600E68BED /* Exceptions for "SchoolTool" folder in "SchoolTool" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
+			platformFiltersByRelativePath = {
+				LaunchScreen.storyboard = (ios, );
+			};
 			target = 8DDA96082E7AA2DD0015D242 /* SchoolTool */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8D4927EE2E7F1EDD00CFFCCA /* TimeTable Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8D4927FD2E7F1EE100CFFCCA /* Exceptions for "TimeTable Widget" folder in "TimeTable WidgetExtension" target */,
+			);
+			path = "TimeTable Widget";
+			sourceTree = "<group>";
+		};
+		8D49280A2E7F497C00CFFCCA /* TimeTable Widget WatchOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8D4928182E7F498000CFFCCA /* Exceptions for "TimeTable Widget WatchOS" folder in "TimeTable Widget WatchOSExtension" target */,
+			);
+			path = "TimeTable Widget WatchOS";
+			sourceTree = "<group>";
+		};
 		8DDA960B2E7AA2DD0015D242 /* SchoolTool */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -68,6 +149,24 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8D4927E52E7F1EDD00CFFCCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D4927ED2E7F1EDD00CFFCCA /* SwiftUI.framework in Frameworks */,
+				8D4927EB2E7F1EDD00CFFCCA /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D4928042E7F497C00CFFCCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D4928092E7F497C00CFFCCA /* SwiftUI.framework in Frameworks */,
+				8D4928082E7F497C00CFFCCA /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DDA96062E7AA2DD0015D242 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -87,12 +186,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8D4927E92E7F1EDD00CFFCCA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */,
+				8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8DDA96002E7AA2DD0015D242 = {
 			isa = PBXGroup;
 			children = (
 				8DDA960B2E7AA2DD0015D242 /* SchoolTool */,
 				8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
+				8D4927EE2E7F1EDD00CFFCCA /* TimeTable Widget */,
+				8D49280A2E7F497C00CFFCCA /* TimeTable Widget WatchOS */,
+				8D4927E92E7F1EDD00CFFCCA /* Frameworks */,
 				8DDA960A2E7AA2DD0015D242 /* Products */,
+				8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */,
+				8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,6 +214,8 @@
 			children = (
 				8DDA96092E7AA2DD0015D242 /* SchoolTool.app */,
 				8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */,
+				8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */,
+				8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +223,50 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8D4927E72E7F1EDD00CFFCCA /* TimeTable WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D4927FC2E7F1EE100CFFCCA /* Build configuration list for PBXNativeTarget "TimeTable WidgetExtension" */;
+			buildPhases = (
+				8D4927E42E7F1EDD00CFFCCA /* Sources */,
+				8D4927E52E7F1EDD00CFFCCA /* Frameworks */,
+				8D4927E62E7F1EDD00CFFCCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8D4927EE2E7F1EDD00CFFCCA /* TimeTable Widget */,
+			);
+			name = "TimeTable WidgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "TimeTable WidgetExtension";
+			productReference = 8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		8D4928062E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D4928152E7F498000CFFCCA /* Build configuration list for PBXNativeTarget "TimeTable Widget WatchOSExtension" */;
+			buildPhases = (
+				8D4928032E7F497C00CFFCCA /* Sources */,
+				8D4928042E7F497C00CFFCCA /* Frameworks */,
+				8D4928052E7F497C00CFFCCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8D49280A2E7F497C00CFFCCA /* TimeTable Widget WatchOS */,
+			);
+			name = "TimeTable Widget WatchOSExtension";
+			packageProductDependencies = (
+			);
+			productName = "TimeTable Widget WatchOSExtension";
+			productReference = 8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		8DDA96082E7AA2DD0015D242 /* SchoolTool */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8DDA96142E7AA2E00015D242 /* Build configuration list for PBXNativeTarget "SchoolTool" */;
@@ -116,11 +275,13 @@
 				8DDA96062E7AA2DD0015D242 /* Frameworks */,
 				8DDA96072E7AA2DD0015D242 /* Resources */,
 				8DACA61C2E7E9F6500E68BED /* Embed Watch Content */,
+				8D4927F92E7F1EE100CFFCCA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				8DF42F172E7EE74A00DB91D8 /* PBXTargetDependency */,
+				8D4927F72E7F1EE100CFFCCA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8DDA960B2E7AA2DD0015D242 /* SchoolTool */,
@@ -141,10 +302,12 @@
 				8DF42F0A2E7EE74900DB91D8 /* Sources */,
 				8DF42F0B2E7EE74900DB91D8 /* Frameworks */,
 				8DF42F0C2E7EE74900DB91D8 /* Resources */,
+				8D4928192E7F498000CFFCCA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8D4928132E7F498000CFFCCA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
@@ -166,6 +329,13 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					8D4927E72E7F1EDD00CFFCCA = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					8D4928062E7F497C00CFFCCA = {
+						CreatedOnToolsVersion = 26.0;
+						LastSwiftMigration = 2600;
+					};
 					8DDA96082E7AA2DD0015D242 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -180,6 +350,7 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 8DDA96002E7AA2DD0015D242;
 			minimizedProjectReferenceProxies = 1;
@@ -194,11 +365,27 @@
 			targets = (
 				8DDA96082E7AA2DD0015D242 /* SchoolTool */,
 				8DF42F0D2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
+				8D4927E72E7F1EDD00CFFCCA /* TimeTable WidgetExtension */,
+				8D4928062E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8D4927E62E7F1EDD00CFFCCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D4928052E7F497C00CFFCCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DDA96072E7AA2DD0015D242 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -216,6 +403,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8D4927E42E7F1EDD00CFFCCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D4928032E7F497C00CFFCCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DDA96052E7AA2DD0015D242 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,14 +434,165 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8D4927F72E7F1EE100CFFCCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 8D4927E72E7F1EDD00CFFCCA /* TimeTable WidgetExtension */;
+			targetProxy = 8D4927F62E7F1EE100CFFCCA /* PBXContainerItemProxy */;
+		};
+		8D4928132E7F498000CFFCCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D4928062E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension */;
+			targetProxy = 8D4928122E7F498000CFFCCA /* PBXContainerItemProxy */;
+		};
 		8DF42F172E7EE74A00DB91D8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 8DF42F0D2E7EE74900DB91D8 /* SchoolTool Watch Watch App */;
 			targetProxy = 8DF42F162E7EE74A00DB91D8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		8D4927FA2E7F1EE100CFFCCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "TimeTable WidgetExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TimeTable Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.TimeTable-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8D4927FB2E7F1EE100CFFCCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "TimeTable WidgetExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TimeTable Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.TimeTable-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8D4928162E7F498000CFFCCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "TimeTable Widget WatchOSExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TimeTable Widget WatchOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget WatchOS";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.watchkitapp.TimeTable-Widget-WatchOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11;
+			};
+			name = Debug;
+		};
+		8D4928172E7F498000CFFCCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "TimeTable Widget WatchOSExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P6PV2R9443;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TimeTable Widget WatchOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget WatchOS";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.watchkitapp.TimeTable-Widget-WatchOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11;
+			};
+			name = Release;
+		};
 		8DDA96122E7AA2E00015D242 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -301,6 +653,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -358,6 +711,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
@@ -481,6 +835,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "SchoolTool Watch Watch App/SchoolTool Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
@@ -493,7 +848,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -515,6 +870,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "SchoolTool Watch Watch App/SchoolTool Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
@@ -527,7 +883,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timi2506.SchoolTool.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -547,6 +903,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8D4927FC2E7F1EE100CFFCCA /* Build configuration list for PBXNativeTarget "TimeTable WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D4927FA2E7F1EE100CFFCCA /* Debug */,
+				8D4927FB2E7F1EE100CFFCCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D4928152E7F498000CFFCCA /* Build configuration list for PBXNativeTarget "TimeTable Widget WatchOSExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D4928162E7F498000CFFCCA /* Debug */,
+				8D4928172E7F498000CFFCCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8DDA96042E7AA2DD0015D242 /* Build configuration list for PBXProject "SchoolTool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

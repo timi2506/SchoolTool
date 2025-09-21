@@ -1,7 +1,9 @@
 import SwiftUI
 import PDFKit
 import UniformTypeIdentifiers
+#if os(iOS)
 import Drops
+#endif
 
 struct PDFToolView: View {
     @State var selectedURL: URL?

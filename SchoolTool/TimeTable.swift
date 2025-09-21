@@ -690,10 +690,11 @@ extension View {
 #Preview {
     ContentView()
 }
-
+#if canImport(WatchConnectivity)
 import WatchConnectivity
+#endif
 import Drops
-
+#if os(iOS)
 /// Class Holding All TimeTable Data
 class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
     // MARK: - WCSessionDelegate
@@ -729,11 +730,26 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
             save()
         }
     }
+    @Published var watchAppVersionString: String?
+    @Published var waitingForVersionString = false
+    @AppStorage("watchLastSynced") var lastSynced: String?
     func save() {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(schedule) {
             UserDefaults.shared.set(encoded, forKey: "schoolToolSchedule")
             sendToAppleWatch(encoded)
+        }
+    }
+    func requestAppVersionString() {
+        watchAppVersionString = nil
+        waitingForVersionString = true
+        let messageDict = ["request": "appVersionString"]
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(messageDict, replyHandler: nil) { error in
+                print("Failed to send message", error.localizedDescription)
+            }
+        } else {
+            WCSession.default.transferUserInfo(messageDict)
         }
     }
     func sendToAppleWatch(_ data: Data? = nil) {
@@ -748,23 +764,21 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 print("Failed to send message:", error.localizedDescription)
                 errorOccured = true
             }
-#if os(iOS)
             let drop = Drop(title: "Schedule Synced to Watch", subtitle: "Apple Watch synced successfully", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .bottom)
             if !errorOccured {
                 Drops.hideAll()
                 Drops.show(drop)
+                lastSynced = Date().formatted(date: .long, time: .shortened)
             }
-#endif
         } else {
             // fallback: send as background transfer
             WCSession.default.transferUserInfo(messageDict)
-#if os(iOS)
             let drop = Drop(title: "Schedule will Sync to Watch", subtitle: "When connected", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .bottom)
             if !errorOccured {
                 Drops.hideAll()
                 Drops.show(drop)
+                lastSynced = Date().formatted(date: .long, time: .shortened)
             }
-#endif
         }
     }
     // Receiving messages
@@ -777,6 +791,9 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                         print("Unknown Request")
                 }
             }
+        } else if let appVersionString = message["appVersionString"] as? String {
+            watchAppVersionString = appVersionString
+            waitingForVersionString = false
         }
     }
     
@@ -789,9 +806,37 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                         print("Unknown Request")
                 }
             }
+        } else if let appVersionString = userInfo["appVersionString"] as? String {
+            watchAppVersionString = appVersionString
+            waitingForVersionString = false
         }
     }
 }
+#elseif os(macOS)
+/// Class Holding All TimeTable Data
+class TimeTableManager: ObservableObject {
+    /// Shared TimeTable Manager
+    static let shared = TimeTableManager()
+    /// Use Shared Manager Instead
+    init() {
+        let decoder = JSONDecoder()
+        if let data = UserDefaults.shared.data(forKey: "schoolToolSchedule"), let existing = try? decoder.decode(TimeTableSchedule.self, from: data) {
+            self.schedule = existing
+        }
+    }
+    @Published var schedule: TimeTableSchedule? {
+        didSet {
+            save()
+        }
+    }
+    func save() {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(schedule) {
+            UserDefaults.shared.set(encoded, forKey: "schoolToolSchedule")
+        }
+    }
+}
+#endif
 
 struct TimeTableLesson: Identifiable, Codable, Hashable {
     var id = UUID()

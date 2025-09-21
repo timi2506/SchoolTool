@@ -1,5 +1,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
+#if os(iOS)
+import WatchConnectivity
+#endif
 
 struct SettingsView: View {
     var body: some View {
@@ -21,6 +24,14 @@ struct SettingsView: View {
                     } label: {
                         labelView(title: "Import/Export", symbol: "cloud.fill", symbolBG: .purple, description: "Import or Export Stuff")
                     }
+                    #if os(iOS)
+                    NavigationLink {
+                        AppleWatchView()
+                    } label: {
+                        labelView(title: "Apple Watch", symbol: "applewatch", symbolBG: .green, description: WCSession.default.isWatchAppInstalled ? "Manage syncing to Watch" : "Watch App not Installed")
+                    }
+                    .disabled(!WCSession.default.isWatchAppInstalled)
+                    #endif
                 }
             }
         }
@@ -37,7 +48,7 @@ struct SettingsView: View {
                     .foregroundStyle(color)
             )
     }
-    func labelView(title: String, symbol: String, symbolBG: Color, description: String) -> some View {
+    func labelView(title: LocalizedStringResource, symbol: String, symbolBG: Color, description: LocalizedStringResource) -> some View {
         HStack {
             icon(for: symbol, color: symbolBG)
             VStack(alignment: .leading) {
@@ -50,6 +61,56 @@ struct SettingsView: View {
         }
     }
 }
+
+#Preview {
+    SettingsView()
+}
+
+#if os(iOS)
+struct AppleWatchView: View {
+    @StateObject var manager = TimeTableManager.shared
+    var body: some View {
+        Form {
+            HStack {
+                Spacer()
+                ContentUnavailableView("SchoolTool watchOS", systemImage: "applewatch", description: Text("Version \(manager.watchAppVersionString ?? "-")"))
+                Spacer()
+            }
+            Section("TimeTable Sync") {
+                Button("Force Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90") {
+                    manager.sendToAppleWatch()
+                }
+                HStack {
+                    Text("Last Synced")
+                    Spacer()
+                    Text(manager.lastSynced ?? "Never")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Apple Watch")
+#if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+#endif
+        .toolbar {
+            if manager.waitingForVersionString {
+                ProgressView()
+                    .controlSize(.regular)
+            } else {
+                Button("Refresh", systemImage: "arrow.clockwise") {
+                    manager.requestAppVersionString()
+                }
+                .labelStyle(.iconOnly)
+            }
+        }
+        .onAppear {
+            manager.requestAppVersionString()
+        }
+    }
+}
+#endif
 
 struct AboutView: View {
     private var appVersion: String {
