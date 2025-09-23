@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct TimeTableEntry: TimelineEntry {
     var date: Date
@@ -38,7 +39,7 @@ struct TimeTableWidgetView: View {
 
     var body: some View {
         if let item = entry.item {
-            Group {
+            Button(intent: RefreshWidgetsIntent()) {
                 switch widgetFamily {
                     case .accessoryCorner: accessoryCorner(item)
                     case .accessoryInline: accessoryInline(item)
@@ -48,16 +49,19 @@ struct TimeTableWidgetView: View {
                         Text("?")
                 }
             }
+            .buttonStyle(.plain)
             .containerBackground(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom), for: .widget)
             .widgetAccentable()
+            
         } else {
-            Group {
+            Button(intent: RefreshWidgetsIntent()) {
                 switch widgetFamily {
                     case .accessoryCircular, .accessoryCorner, .accessoryInline, .accessoryRectangular: unavailable()
                     default:
                         Text("?")
                 }
             }
+            .buttonStyle(.plain)
             .containerBackground(LinearGradient(colors: [.primary.opacity(0.25), .primary.opacity(0.75)], startPoint: .top, endPoint: .bottom), for: .widget)
             .widgetAccentable()
         }
@@ -155,19 +159,5 @@ struct TimeTableWidget: Widget {
         .configurationDisplayName("Next Class")
         .description("Updates every minute.")
         .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryInline, .accessoryRectangular])
-    }
-}
-
-extension Date {
-    static var iphoneReleaseDate: Date {
-        var components = DateComponents()
-        components.year = 2007
-        components.month = 6
-        components.day = 29
-        components.hour = 9
-        components.minute = 41
-        components.timeZone = TimeZone(secondsFromGMT: 0) // UTC
-        
-        return Calendar.current.date(from: components)!
     }
 }

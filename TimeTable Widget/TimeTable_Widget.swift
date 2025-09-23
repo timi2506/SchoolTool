@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct TimeTableEntry: TimelineEntry {
     var date: Date
@@ -62,73 +63,102 @@ struct TimeTableWidgetView: View {
         return "\(formatter.string(from: time.startDate)) – \(formatter.string(from: time.endDate))"
     }
     func accessoryInlineUnavailable() -> some View {
-        HStack {
-            Image(systemName: "questionmark")
-            Text("No Schedule")
+        Button(intent: RefreshWidgetsIntent()) {
+            HStack {
+                Image(systemName: "questionmark")
+                Text("No Schedule")
+            }
         }
+        .buttonStyle(.plain)
     }
     func accessoryInline(_ item: ScheduleClass) -> some View {
-        HStack {
-            Image(systemName: item.lesson.symbol)
+        Button(intent: RefreshWidgetsIntent()) {
+            HStack {
+                Image(systemName: item.lesson.symbol)
                 Text(item.lesson.name)
+            }
         }
+        .buttonStyle(.plain)
     }
     func accessoryCircularUnavailable() -> some View {
-        VStack {
-            Text("No")
-                .font(.system(size: 10))
-                .bold()
-                .lineLimit(1)
-            Image(systemName: "questionmark")
-                .font(.title)
-            Text("Schedule")
-                .font(.system(size: 10))
+        Button(intent: RefreshWidgetsIntent()) {
+            VStack {
+                Text("No")
+                    .font(.system(size: 10))
+                    .bold()
+                    .lineLimit(1)
+                Image(systemName: "questionmark")
+                    .font(.title)
+                Text("Schedule")
+                    .font(.system(size: 10))
+            }
         }
+        .buttonStyle(.plain)
     }
     func accessoryCircular(_ item: ScheduleClass) -> some View {
-        VStack {
-            Text(item.lesson.name)
-                .font(.system(size: 10))
-                .bold()
-                .lineLimit(1)
-            Image(systemName: item.lesson.symbol)
-                .font(.title)
-            Text(timeString(item.time))
-                .font(.system(size: 7.5))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+        Button(intent: RefreshWidgetsIntent()) {
+            VStack {
+                Text(item.lesson.name)
+                    .font(.system(size: 10))
+                    .bold()
+                    .lineLimit(1)
+                Image(systemName: item.lesson.symbol)
+                    .font(.title)
+                Text(timeString(item.time))
+                    .font(.system(size: 7.5))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
         }
+        .buttonStyle(.plain)
     }
     func accessoryRectangular(_ item: ScheduleClass) -> some View {
-        HStack {
-            Image(systemName: item.lesson.symbol)
-                .font(.title)
-            VStack(alignment: .leading) {
-                Text(item.lesson.name)
-                    .bold()
-                Text(timeString(item.time))
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
+        ZStack {
+            HStack {
+                Image(systemName: item.lesson.symbol)
+                    .font(.title)
+                VStack(alignment: .leading) {
+                    Text(item.lesson.name)
+                        .bold()
+                    Text(timeString(item.time))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                }
             }
-
+            Button(intent: RefreshWidgetsIntent()) {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("REFRESH")
+                }
+                .font(.system(size: 7.5))
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .padding(.top, -10)
         }
     }
     func accessoryRectangularUnavailable() -> some View {
-        HStack {
-            Image(systemName: "questionmark")
-                .font(.title)
-            VStack(alignment: .leading) {
-                Text("No Schedule")
-                    .bold()
-                Text("Set one up first!")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        Button(intent: RefreshWidgetsIntent()) {
+            HStack {
+                Image(systemName: "questionmark")
+                    .font(.title)
+                VStack(alignment: .leading) {
+                    Text("No Schedule")
+                        .bold()
+                    Text("Set one up first!")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-            
         }
+        .buttonStyle(.plain)
     }
     func systemSizeUnavailable() -> some View {
-        ContentUnavailableView("No Schedule", systemImage: "calendar", description: Text("Set one up first!"))
+        Button(intent: RefreshWidgetsIntent()) {
+            ContentUnavailableView("No Schedule", systemImage: "calendar", description: Text("Set one up first!"))
+        }
+        .buttonStyle(.plain)
     }
     func largeExtraLarge(_ item: ScheduleClass) -> some View {
         ZStack {
@@ -172,6 +202,17 @@ struct TimeTableWidgetView: View {
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .padding(.bottom, -10)
+            Button(intent: RefreshWidgetsIntent()) {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("REFRESH")
+                }
+                .font(.system(size: 7.5))
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .padding(.top, -10)
         }
     }
     func smallMedium(_ item: ScheduleClass) -> some View {
@@ -218,6 +259,17 @@ struct TimeTableWidgetView: View {
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .padding(.bottom, -10)
+            Button(intent: RefreshWidgetsIntent()) {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("REFRESH")
+                }
+                .font(.system(size: 7.5))
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .padding(.top, -10)
         }
     }
 }
@@ -231,20 +283,10 @@ struct TimeTableWidget: Widget {
         }
         .configurationDisplayName("Next Class")
         .description("Updates every minute.")
+        #if os(iOS)
         .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular, .accessoryCircular, .accessoryInline, .systemLarge, .systemExtraLarge])
-    }
-}
-
-extension Date {
-    static var iphoneReleaseDate: Date {
-        var components = DateComponents()
-        components.year = 2007
-        components.month = 6
-        components.day = 29
-        components.hour = 9
-        components.minute = 41
-        components.timeZone = TimeZone(secondsFromGMT: 0) // UTC
-        
-        return Calendar.current.date(from: components)!
+        #elseif os(macOS)
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        #endif
     }
 }

@@ -209,7 +209,7 @@ struct LessonRow: View {
         NavigationLink {
             ClassDetailView(item: item, showEditor: $showEditor)
         } label: {
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center) {
                 Image(systemName: item.lesson.symbol)
                     .foregroundStyle(primary)
                     .frame(width: 25)
@@ -242,8 +242,8 @@ struct LessonRow: View {
                         .frame(width: 10, height: 10)
                 }
             }
+            .padding(.vertical, 5)
             .contentShape(.rect)
-            .padding(.vertical, 6)
             .contextMenu {
                 Button {
                     showEditor = true
@@ -279,6 +279,12 @@ struct AddScheduleView: View {
     @State var lesson: TimeTableLesson = .init(name: "", teacherName: nil, roomName: nil, color: .blue)
     @FocusState var nameFocused: Bool
     @FocusState var teacherFocused: Bool
+    var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
+    }
     var body: some View {
         VStack {
             HStack {
@@ -312,20 +318,12 @@ struct AddScheduleView: View {
                     }
                     if nameFocused {
                         if !lesson.name.isEmpty {
-                            if nameSuggestions.isEmpty {
+                            if lessonSuggestions.isEmpty {
                                 Text("No Suggestions")
                                     .foregroundStyle(.secondary)
                             }
-                            ForEach(nameSuggestions, id: \.self) { suggestion in
-                                Button(action: {
-                                    lesson.name = suggestion
-                                    nameFocused = false
-                                }) {
-                                    HStack {
-                                        Image(systemName: "text.insert")
-                                        Text(suggestion)
-                                    }
-                                }
+                            ForEach(lessonSuggestions) { suggestion in
+                                suggestionView(for: suggestion, lesson: $lesson)
                             }
                         } else {
                             Text("Start typing to see Suggestions...")
@@ -340,8 +338,59 @@ struct AddScheduleView: View {
                                 .tag(day)
                         }
                     }
-                    DatePicker("Start Time", selection: $selectedTime.startDate,  displayedComponents: .hourAndMinute)
-                    DatePicker("End Time", selection: $selectedTime.endDate, displayedComponents: .hourAndMinute)
+                    
+                    VStack(alignment: .leading) {
+                        DatePicker("Start Time", selection: $selectedTime.startDate,  displayedComponents: .hourAndMinute)
+                        Menu {
+                            ForEach(startTimeRecommendations, id: \.self) { time in
+                                Button(action: {
+                                    selectedTime.startDate = time
+                                }) {
+                                    Text(time, formatter: timeFormatter)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text("Recommendations")
+                                Spacer()
+                                Text(startTimeRecommendations.count, format: .number)
+                                Image(systemName: "chevron.down")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .contentShape(.rect)
+                        }
+                        .disabled(startTimeRecommendations.isEmpty)
+                        .menuStyle(.button)
+                        .buttonStyle(.plain)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        DatePicker("End Time", selection: $selectedTime.endDate, displayedComponents: .hourAndMinute)
+                        Menu {
+                            ForEach(endTimeRecommendations, id: \.self) { time in
+                                Button(action: {
+                                    selectedTime.endDate = time
+                                }) {
+                                    Text(time, formatter: timeFormatter)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text("Recommendations")
+                                Spacer()
+                                Text(endTimeRecommendations.count, format: .number)
+                                Image(systemName: "chevron.down")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .contentShape(.rect)
+                        }
+                        .disabled(endTimeRecommendations.isEmpty)
+                        .menuStyle(.button)
+                        .buttonStyle(.plain)
+                    }
+                    
                     if !isTimeValid {
                         Label("End time must be after start time", systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
@@ -399,25 +448,139 @@ struct AddScheduleView: View {
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
         }
-        .background(LinearGradient(colors: [lesson.color.opacity(0.25), lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom))
+        .background(
+            LinearGradient(colors: [lesson.color.opacity(0.25), lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
+                .id(lesson.color)
+                .contentTransition(.opacity)
+        )
         .animation(.default, value: nameFocused)
         .animation(.default, value: lesson)
         .navStacked()
     }
-    var nameSuggestions: [String] {
-        var added: [String] = []
+    func suggestionView(for suggestion: TimeTableLesson, lesson: Binding<TimeTableLesson>) -> some View {
+        Button(action: {
+            withAnimation() {
+                lesson.wrappedValue.name = suggestion.name
+                lesson.wrappedValue.color = suggestion.color
+                if let suggestedTeacherName = suggestion.teacherName {
+                    lesson.wrappedValue.teacherName = suggestedTeacherName
+                }
+                if let roomName = suggestion.roomName {
+                    lesson.wrappedValue.roomName = roomName
+                }
+                lesson.wrappedValue.symbol = suggestion.symbol
+                nameFocused = false
+            }
+        }) {
+            HStack(alignment: .center) {
+                Image(systemName: suggestion.symbol)
+                    .foregroundStyle(.primary)
+                    .frame(width: 25)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(suggestion.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    HStack(spacing: 8) {
+                        if let teacher = suggestion.teacherName, !teacher.isEmpty {
+                            Text(teacher)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        if let room = suggestion.roomName, !room.isEmpty {
+                            if suggestion.teacherName != nil {
+                                Divider()
+                            }
+                            Text("Room \(room)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Spacer()
+                if lesson.wrappedValue == suggestion {
+                    Image(systemName: "checkmark")
+                } else {
+                    Circle()
+                        .fill(suggestion.color)
+                        .frame(width: 10, height: 10)
+                }
+            }
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var startTimeRecommendations: [Date] {
+        var added: [Date] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap { day in
+            day.classes.compactMap {
+                let candidate = $0.time.start.asToday
+                if !added.contains(candidate) {
+                    added.append(candidate)
+                    return candidate
+                } else {
+                    return nil
+                }
+            }
+        }
         
-        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap({ $0.classes.compactMap({
-            if !added.contains($0.lesson.name) {
-                added.append($0.lesson.name)
-                return $0.lesson.name
+        return (allSuggestions ?? []).sorted { lhs, rhs in
+            let calendar = Calendar.current
+            let lhsComponents = calendar.dateComponents([.hour, .minute, .second], from: lhs)
+            let rhsComponents = calendar.dateComponents([.hour, .minute, .second], from: rhs)
+            
+            if lhsComponents.hour != rhsComponents.hour {
+                return (lhsComponents.hour ?? 0) < (rhsComponents.hour ?? 0)
+            } else if lhsComponents.minute != rhsComponents.minute {
+                return (lhsComponents.minute ?? 0) < (rhsComponents.minute ?? 0)
+            } else {
+                return (lhsComponents.second ?? 0) < (rhsComponents.second ?? 0)
+            }
+        }
+    }
+    
+    private var endTimeRecommendations: [Date] {
+        var added: [Date] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap { day in
+            day.classes.compactMap {
+                let candidate = $0.time.end.asToday
+                if !added.contains(candidate) {
+                    added.append(candidate)
+                    return candidate
+                } else {
+                    return nil
+                }
+            }
+        }
+        
+        return (allSuggestions ?? []).sorted { lhs, rhs in
+            let calendar = Calendar.current
+            let lhsComponents = calendar.dateComponents([.hour, .minute, .second], from: lhs)
+            let rhsComponents = calendar.dateComponents([.hour, .minute, .second], from: rhs)
+            
+            if lhsComponents.hour != rhsComponents.hour {
+                return (lhsComponents.hour ?? 0) < (rhsComponents.hour ?? 0)
+            } else if lhsComponents.minute != rhsComponents.minute {
+                return (lhsComponents.minute ?? 0) < (rhsComponents.minute ?? 0)
+            } else {
+                return (lhsComponents.second ?? 0) < (rhsComponents.second ?? 0)
+            }
+        }
+    }
+
+    private var lessonSuggestions: [TimeTableLesson] {
+        var added: [TimeTableLesson] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap({ $0.classes.compactMap({ classItem in
+            if !added.contains(where: { $0.name == classItem.lesson.name && $0.color == classItem.lesson.color && $0.teacherName == classItem.lesson.teacherName && $0.roomName == classItem.lesson.roomName }) {
+                added.append(classItem.lesson)
+                return classItem.lesson
             } else {
                 return nil
             }
         }) })
-        
-        return allSuggestions?.filter({ $0.lowercased().contains(lesson.name.lowercased()) }) ?? []
+        return allSuggestions?.filter({ $0.name.lowercased().contains(lesson.name.lowercased()) }) ?? []
     }
+    
     var teacherSuggestions: [String] {
         guard let currentTeacherName = lesson.teacherName else { return [] }
         var added: [String] = []
@@ -481,7 +644,12 @@ struct LessonEditorView: View {
         self._lesson = State(initialValue: original.lesson)
         self.original = original
     }
-
+    var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
+    }
     var body: some View {
         VStack {
             HStack {
@@ -514,20 +682,12 @@ struct LessonEditorView: View {
                     }
                     if nameFocused {
                         if !lesson.name.isEmpty {
-                            if nameSuggestions.isEmpty {
+                            if lessonSuggestions.isEmpty {
                                 Text("No Suggestions")
                                     .foregroundStyle(.secondary)
                             }
-                            ForEach(nameSuggestions, id: \.self) { suggestion in
-                                Button(action: {
-                                    lesson.name = suggestion
-                                    nameFocused = false
-                                }) {
-                                    HStack {
-                                        Image(systemName: "text.insert")
-                                        Text(suggestion)
-                                    }
-                                }
+                            ForEach(lessonSuggestions) { suggestion in
+                                suggestionView(for: suggestion, lesson: $lesson)
                             }
                         } else {
                             Text("Start typing to see Suggestions...")
@@ -542,8 +702,59 @@ struct LessonEditorView: View {
                                 .tag(day)
                         }
                     }
-                    DatePicker("Start Time", selection: $selectedTime.startDate,  displayedComponents: .hourAndMinute)
-                    DatePicker("End Time", selection: $selectedTime.endDate, displayedComponents: .hourAndMinute)
+                    
+                    VStack(alignment: .leading) {
+                        DatePicker("Start Time", selection: $selectedTime.startDate,  displayedComponents: .hourAndMinute)
+                        Menu {
+                            ForEach(startTimeRecommendations, id: \.self) { time in
+                                Button(action: {
+                                    selectedTime.startDate = time
+                                }) {
+                                    Text(time, formatter: timeFormatter)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text("Recommendations")
+                                Spacer()
+                                Text(startTimeRecommendations.count, format: .number)
+                                Image(systemName: "chevron.down")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .contentShape(.rect)
+                        }
+                        .disabled(startTimeRecommendations.isEmpty)
+                        .menuStyle(.button)
+                        .buttonStyle(.plain)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        DatePicker("End Time", selection: $selectedTime.endDate, displayedComponents: .hourAndMinute)
+                        Menu {
+                            ForEach(endTimeRecommendations, id: \.self) { time in
+                                Button(action: {
+                                    selectedTime.endDate = time
+                                }) {
+                                    Text(time, formatter: timeFormatter)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text("Recommendations")
+                                Spacer()
+                                Text(endTimeRecommendations.count, format: .number)
+                                Image(systemName: "chevron.down")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .contentShape(.rect)
+                        }
+                        .disabled(endTimeRecommendations.isEmpty)
+                        .menuStyle(.button)
+                        .buttonStyle(.plain)
+                    }
+                    
                     if !isTimeValid {
                         Label("End time must be after start time", systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
@@ -601,23 +812,138 @@ struct LessonEditorView: View {
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
         }
-        .background(LinearGradient(colors: [lesson.color.opacity(0.25), lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom))
+        .background(
+            LinearGradient(colors: [lesson.color.opacity(0.25), lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
+                .id(lesson.color)
+                .contentTransition(.opacity)
+        )
         .animation(.default, value: nameFocused)
         .animation(.default, value: lesson)
         .navStacked()
     }
 
-    private var nameSuggestions: [String] {
-        var added: [String] = []
-        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap({ $0.classes.compactMap({
-            if !added.contains($0.lesson.name) {
-                added.append($0.lesson.name)
-                return $0.lesson.name
+    func suggestionView(for suggestion: TimeTableLesson, lesson: Binding<TimeTableLesson>) -> some View {
+        Button(action: {
+            withAnimation() {
+                lesson.wrappedValue.name = suggestion.name
+                lesson.wrappedValue.color = suggestion.color
+                if let suggestedTeacherName = suggestion.teacherName {
+                    lesson.wrappedValue.teacherName = suggestedTeacherName
+                }
+                if let roomName = suggestion.roomName {
+                    lesson.wrappedValue.roomName = roomName
+                }
+                lesson.wrappedValue.symbol = suggestion.symbol
+                nameFocused = false
+            }
+        }) {
+            HStack(alignment: .center) {
+                Image(systemName: suggestion.symbol)
+                    .foregroundStyle(.primary)
+                    .frame(width: 25)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(suggestion.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    HStack(spacing: 8) {
+                        if let teacher = suggestion.teacherName, !teacher.isEmpty {
+                            Text(teacher)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        if let room = suggestion.roomName, !room.isEmpty {
+                            if suggestion.teacherName != nil {
+                                Divider()
+                            }
+                            Text("Room \(room)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Spacer()
+                if lesson.wrappedValue == suggestion {
+                    Image(systemName: "checkmark")
+                } else {
+                    Circle()
+                        .fill(suggestion.color)
+                        .frame(width: 10, height: 10)
+                }
+            }
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var startTimeRecommendations: [Date] {
+        var added: [Date] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap { day in
+            day.classes.compactMap {
+                let candidate = $0.time.start.asToday
+                if !added.contains(candidate) {
+                    added.append(candidate)
+                    return candidate
+                } else {
+                    return nil
+                }
+            }
+        }
+        
+        return (allSuggestions ?? []).sorted { lhs, rhs in
+            let calendar = Calendar.current
+            let lhsComponents = calendar.dateComponents([.hour, .minute, .second], from: lhs)
+            let rhsComponents = calendar.dateComponents([.hour, .minute, .second], from: rhs)
+            
+            if lhsComponents.hour != rhsComponents.hour {
+                return (lhsComponents.hour ?? 0) < (rhsComponents.hour ?? 0)
+            } else if lhsComponents.minute != rhsComponents.minute {
+                return (lhsComponents.minute ?? 0) < (rhsComponents.minute ?? 0)
+            } else {
+                return (lhsComponents.second ?? 0) < (rhsComponents.second ?? 0)
+            }
+        }
+    }
+    
+    private var endTimeRecommendations: [Date] {
+        var added: [Date] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap { day in
+            day.classes.compactMap {
+                let candidate = $0.time.end.asToday
+                if !added.contains(candidate) {
+                    added.append(candidate)
+                    return candidate
+                } else {
+                    return nil
+                }
+            }
+        }
+        
+        return (allSuggestions ?? []).sorted { lhs, rhs in
+            let calendar = Calendar.current
+            let lhsComponents = calendar.dateComponents([.hour, .minute, .second], from: lhs)
+            let rhsComponents = calendar.dateComponents([.hour, .minute, .second], from: rhs)
+            
+            if lhsComponents.hour != rhsComponents.hour {
+                return (lhsComponents.hour ?? 0) < (rhsComponents.hour ?? 0)
+            } else if lhsComponents.minute != rhsComponents.minute {
+                return (lhsComponents.minute ?? 0) < (rhsComponents.minute ?? 0)
+            } else {
+                return (lhsComponents.second ?? 0) < (rhsComponents.second ?? 0)
+            }
+        }
+    }
+    
+    private var lessonSuggestions: [TimeTableLesson] {
+        var added: [TimeTableLesson] = []
+        let allSuggestions = TimeTableManager.shared.schedule?.days.flatMap({ $0.classes.compactMap({ classItem in
+            if !added.contains(where: { $0.name == classItem.lesson.name && $0.color == classItem.lesson.color && $0.teacherName == classItem.lesson.teacherName && $0.roomName == classItem.lesson.roomName }) {
+                added.append(classItem.lesson)
+                return classItem.lesson
             } else {
                 return nil
             }
         }) })
-        return allSuggestions?.filter({ $0.lowercased().contains(lesson.name.lowercased()) }) ?? []
+        return allSuggestions?.filter({ $0.name.lowercased().contains(lesson.name.lowercased()) }) ?? []
     }
 
     private var teacherSuggestions: [String] {

@@ -29,14 +29,14 @@ struct PDFToolView: View {
                             Spacer()
                         }
                     } else {
-                        #if os(iOS)
+#if os(iOS)
                         VStack(alignment: .leading) {
                             Toggle("Save to Photo Library", isOn: $saveToPhotos)
                             Text("If turned on, Photos will be saved to the Photos Library instead of the Files App")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        #endif
+#endif
                         Section("Results") {
                             ForEach(results) { result in
                                 PDFResultRow(result: result, quickLookItem: $quickLookItem, errorMsg: $errorMsg) {
@@ -55,10 +55,10 @@ struct PDFToolView: View {
                         selectedURL = items.first
                         return true
                     } else {
-                        #if os(iOS)
+#if os(iOS)
                         let drop = Drop.init(title: "Error", subtitle: "The Dropped File is not a PDF", icon: UIImage(systemName: "xmark"), action: Drop.Action { Drops.hideCurrent() }, position: .top)
                         Drops.show(drop)
-                        #endif
+#endif
                         return false
                     }
                 }
@@ -100,7 +100,11 @@ struct PDFToolView: View {
             }
             .quickLookPreview($quickLookItem)
             .navigationTitle("PDF Tool")
+#if os(macOS)
+            .loadsBeforeAppear()
+#endif
         }
+        
     }
     func onSelection(_ result: [PDFImageResult]) {
         let savedURL = selectedURL
@@ -190,7 +194,7 @@ struct PDFToolView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
-
+                    
                 }
                 .padding(10)
             }
@@ -534,11 +538,11 @@ struct PDFPageSelectionView: View {
                 Text("Right Click to Preview Page")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                #elseif os(iOS)
+#elseif os(iOS)
                 Text("Long Press to Preview Page")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                #endif
+#endif
                 HStack {
                     Button(action: { withAnimation() { listMode.toggle() } }) {
                         Image(systemName: listMode ? "square.grid.2x2" : "list.bullet")
@@ -722,46 +726,46 @@ private struct PDFPageRow: View {
                     CGSize(width: 100, height: 141.5)
 #endif
                 }, cornerRadius: 12)
-                    .overlay(alignment: .top) {
-                        VStack {
-                            HStack {
-                                Spacer()
-                                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                    .font(.title2)
-                                    .foregroundColor(isSelected ? .accentColor : .gray)
+                .overlay(alignment: .top) {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                .font(.title2)
+                                .foregroundColor(isSelected ? .accentColor : .gray)
 #if os(iOS)
-                                    .background(Color(uiColor: .systemBackground))
+                                .background(Color(uiColor: .systemBackground))
 #elseif os(macOS)
-                                    .background(.background)
+                                .background(.background)
 #endif
-                                    .clipShape(.circle)
-                                    .padding(10)
-                                    .animation(.default, value: isSelected)
+                                .clipShape(.circle)
+                                .padding(10)
+                                .animation(.default, value: isSelected)
+                        }
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Text("Page \(index + 1)")
+                                    .bold()
+                                Text(page.label ?? "No Label")
+                                    .foregroundStyle(.secondary)
+                                    .font(.caption)
+                                    .lineLimit(1)
                             }
                             Spacer()
-                            HStack {
-                                Spacer()
-                                VStack {
-                                    Text("Page \(index + 1)")
-                                        .bold()
-                                    Text(page.label ?? "No Label")
-                                        .foregroundStyle(.secondary)
-                                        .font(.caption)
-                                        .lineLimit(1)
-                                }
-                                Spacer()
-                            }
-                            .padding(5)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .foregroundStyle(.ultraThinMaterial)
-                            )
-                            .padding(2.5)
                         }
+                        .padding(5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(.ultraThinMaterial)
+                        )
+                        .padding(2.5)
                     }
-                    .onTapGesture {
-                        onToggle()
-                    }
+                }
+                .onTapGesture {
+                    onToggle()
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(radius: 4)
@@ -818,4 +822,34 @@ struct A4ImageView: View {
 struct CustomSize {
     var width: CGFloat?
     var height: CGFloat?
+}
+
+extension View {
+    func loadsBeforeAppear() -> some View {
+        self.modifier(LoadBeforeAppearModifier())
+    }
+}
+
+struct LoadBeforeAppearModifier: ViewModifier {
+    @State var loading = true
+    func body(content: Content) -> some View {
+        Group {
+            if loading {
+                ProgressView()
+            } else {
+                content
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                loading = false
+            }
+        }
+        .onDisappear {
+            DispatchQueue.main.async {
+                loading = true
+            }
+        }
+    }
+    
 }

@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
+		8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
+		8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
+		8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
 		8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = 8D2CE20E2E7C42E9006962B4 /* Drops */; };
 		8D4927EB2E7F1EDD00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
 		8D4927ED2E7F1EDD00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
-		8D4927F82E7F1EE100CFFCCA /* TimeTable WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8D4927F82E7F1EE100CFFCCA /* TimeTable WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8D4928082E7F497C00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
 		8D4928092E7F497C00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
 		8D4928142E7F498000CFFCCA /* TimeTable Widget WatchOSExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -79,6 +83,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshWidgets.swift; sourceTree = "<group>"; };
 		8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TimeTable WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -206,6 +211,7 @@
 				8DDA960A2E7AA2DD0015D242 /* Products */,
 				8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */,
 				8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */,
+				8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -407,6 +413,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +421,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,6 +429,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +437,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +446,6 @@
 /* Begin PBXTargetDependency section */
 		8D4927F72E7F1EE100CFFCCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
 			target = 8D4927E72E7F1EDD00CFFCCA /* TimeTable WidgetExtension */;
 			targetProxy = 8D4927F62E7F1EE100CFFCCA /* PBXContainerItemProxy */;
 		};
@@ -463,6 +472,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TimeTable Widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget";
@@ -473,12 +485,16 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.TimeTable-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
@@ -496,6 +512,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P6PV2R9443;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TimeTable Widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TimeTable Widget";
@@ -506,12 +525,16 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.timi2506.SchoolTool.TimeTable-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;

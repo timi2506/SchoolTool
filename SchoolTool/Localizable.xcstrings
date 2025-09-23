@@ -561,12 +561,42 @@
         }
       }
     },
+    "Recommendations" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorschläge"
+          }
+        }
+      }
+    },
     "Refresh" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neu Laden"
+          }
+        }
+      }
+    },
+    "Refresh Widgets" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets Neu Laden"
+          }
+        }
+      }
+    },
+    "Refreshes All Widgets" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lädt alle Widgets neu"
           }
         }
       }
@@ -582,7 +612,14 @@
       }
     },
     "Right Click to Preview Page" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur Vorschau gedrückt halten"
+          }
+        }
+      }
     },
     "Room" : {
       "localizations" : {
@@ -870,6 +907,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Twitter"
+          }
+        }
+      }
+    },
+    "Use this Widget to manually refresh Widgets." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutze dieses Widget um Widgets neu zu laden."
           }
         }
       }

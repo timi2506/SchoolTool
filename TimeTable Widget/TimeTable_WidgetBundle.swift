@@ -12,5 +12,6 @@ import SwiftUI
 struct TimeTable_WidgetBundle: WidgetBundle {
     var body: some Widget {
         TimeTableWidget()
+        RefreshWidget()
     }
 }

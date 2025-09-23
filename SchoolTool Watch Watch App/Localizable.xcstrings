@@ -111,6 +111,16 @@
         }
       }
     },
+    "Refreshes All Widgets" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lädt alle Widgets neu"
+          }
+        }
+      }
+    },
     "Reset App" : {
       "localizations" : {
         "de" : {
@@ -247,6 +257,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dienstag"
+          }
+        }
+      }
+    },
+    "Use this Widget to manually refresh Widgets." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutze dieses Widget um alle Widgets neu zu laden."
           }
         }
       }

@@ -58,11 +58,6 @@ struct ContentView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.blue)
-                        Button("Refresh Widgets") {
-                            WidgetCenter.shared.reloadAllTimelines()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.purple)
                         Button("Reset App") {
                             resetAppAlert.toggle()
                         }

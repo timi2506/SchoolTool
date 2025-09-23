@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppIntents
 
 @main
 struct SchoolTool_Watch_Watch_AppApp: App {
