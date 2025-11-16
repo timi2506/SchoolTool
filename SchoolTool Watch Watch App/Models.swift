@@ -11,11 +11,25 @@ struct TimeTableLesson: Identifiable, Codable, Hashable {
     var color: Color
 }
 
+import AppIntents
+
 struct TimeTableSchedule: Identifiable, Codable, Hashable {
     var id = UUID()
     var days: [TimeTableDay]
     
-    enum Days: String, CaseIterable, Codable, RawRepresentable {
+    enum Days: String, CaseIterable, Codable, RawRepresentable, AppEnum {
+        static var typeDisplayRepresentation: TypeDisplayRepresentation = TypeDisplayRepresentation(name: "Day of the Week")
+        
+        static var caseDisplayRepresentations: [TimeTableSchedule.Days : DisplayRepresentation] = [
+            .monday: DisplayRepresentation(title: "Monday"),
+            .tuesday: DisplayRepresentation(title: "Tuesday"),
+            .wednesday: DisplayRepresentation(title: "Wednesday"),
+            .thursday: DisplayRepresentation(title: "Thursday"),
+            .friday: DisplayRepresentation(title: "Friday"),
+            .saturday: DisplayRepresentation(title: "Saturday"),
+            .sunday: DisplayRepresentation(title: "Sunday")
+        ]
+        
         case monday
         case tuesday
         case wednesday
@@ -109,6 +123,7 @@ struct ScheduleClass: Identifiable, Codable, Hashable {
     var id = UUID()
     var time: TimeTableTime
     var lesson: TimeTableLesson
+    var forceDoubleLesson: Bool? = false
 }
 
 struct TimeTableTime: Identifiable, Codable, Hashable {

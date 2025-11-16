@@ -31,6 +31,16 @@
         }
       }
     },
+    "Day of the Week" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag der Woche"
+          }
+        }
+      }
+    },
     "Details" : {
       "localizations" : {
         "de" : {

@@ -162,6 +162,7 @@ struct AboutView: View {
 
 struct AppearanceSettings: View {
     @AppStorage("fullColorRow") var fullColorRow = false
+
     var body: some View {
         Form {
             HStack {

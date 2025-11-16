@@ -83,19 +83,19 @@ struct DayColumnView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Form {
-                    Section("Classes") {
                         ForEach(day.classes) { item in
-                            LessonRow(item: item) {
-                                delete(item)
-                            }
+                            Section(timeRangeString(item)) {
+                                LessonRow(item: item) {
+                                    delete(item)
+                                }
 #if os(iOS)
-                            .listRowBackground(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom))
+                                .listRowBackground(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity( 0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom))
 #endif
+                            }
                         }
                         .onDelete { indexSet in
                             delete(at: indexSet)
                         }
-                    }
                 }
                 .formStyle(.grouped)
                 .scrollContentBackground(.hidden)
@@ -125,6 +125,13 @@ struct DayColumnView: View {
               let classIndex = schedule.days[dayIndex].classes.firstIndex(of: item) else { return }
         schedule.days[dayIndex].classes.remove(at: classIndex)
         manager.schedule = schedule
+    }
+    
+    private func timeRangeString(_ item: ScheduleClass) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return "\(formatter.string(from: item.time.startDate)) – \(formatter.string(from: item.time.endDate))"
     }
 }
 
@@ -193,6 +200,7 @@ struct ClassDetailView: View {
 
 struct LessonRow: View {
     @AppStorage("fullColorRow") var fullColorRow = false
+
     var item: ScheduleClass
     var onDelete: (() -> Void)? = nil
     @State private var showEditor = false
@@ -209,40 +217,19 @@ struct LessonRow: View {
         NavigationLink {
             ClassDetailView(item: item, showEditor: $showEditor)
         } label: {
-            HStack(alignment: .center) {
-                Image(systemName: item.lesson.symbol)
-                    .foregroundStyle(primary)
-                    .frame(width: 25)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(item.lesson.name)
-                        .font(.headline)
-                        .foregroundStyle(primary)
-                    HStack(spacing: 8) {
-                        Text(timeRangeString(item))
-                            .font(.subheadline)
-                            .foregroundStyle(secondary)
-                        if let teacher = item.lesson.teacherName, !teacher.isEmpty {
-                            Divider()
-                            Text(teacher)
-                                .font(.subheadline)
-                                .foregroundStyle(secondary)
-                        }
-                        if let room = item.lesson.roomName, !room.isEmpty {
-                            Divider()
-                            Text("Room \(room)")
-                                .font(.subheadline)
-                                .foregroundStyle(secondary)
-                        }
-                    }
-                }
-                Spacer()
-                if !fullColorRow {
-                    Circle()
-                        .fill(item.lesson.color)
-                        .frame(width: 10, height: 10)
+            VStack(spacing: 0) {
+                labelView
+                    .padding(.vertical, 10)
+                if item.forceDoubleLesson == true {
+                    Spacer()
+                        .frame(height: 5)
+                    Divider()
+                    Spacer()
+                        .frame(height: 5)
+                    labelView
+                        .padding(.vertical, 10)
                 }
             }
-            .padding(.vertical, 5)
             .contentShape(.rect)
             .contextMenu {
                 Button {
@@ -262,12 +249,45 @@ struct LessonRow: View {
         }
         .buttonStyle(.plain)
     }
-
-    private func timeRangeString(_ item: ScheduleClass) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return "\(formatter.string(from: item.time.startDate)) – \(formatter.string(from: item.time.endDate))"
+    
+    var labelView: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: item.lesson.symbol)
+                .foregroundStyle(primary)
+                .frame(width: 25)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(item.lesson.name)
+                    .font(.headline)
+                    .foregroundStyle(primary)
+                HStack(spacing: 8) {
+                    if (item.lesson.teacherName == nil || item.lesson.teacherName?.isEmpty == true) && (item.lesson.roomName == nil || item.lesson.roomName?.isEmpty == true) {
+                        Text("No Additional Information")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        if let teacher = item.lesson.teacherName, !teacher.isEmpty {
+                            Text(teacher)
+                                .font(.subheadline)
+                                .foregroundStyle(secondary)
+                        }
+                        if let room = item.lesson.roomName, !room.isEmpty {
+                            if  !((item.lesson.teacherName == nil || item.lesson.teacherName?.isEmpty == true)) {
+                                Divider()
+                            }
+                            Text("Room \(room)")
+                                .font(.subheadline)
+                                .foregroundStyle(secondary)
+                        }
+                    }
+                }
+            }
+            Spacer()
+            if !fullColorRow {
+                Circle()
+                    .fill(item.lesson.color)
+                    .frame(width: 10, height: 10)
+            }
+        }
     }
 }
 
@@ -279,6 +299,7 @@ struct AddScheduleView: View {
     @State var lesson: TimeTableLesson = .init(name: "", teacherName: nil, roomName: nil, color: .blue)
     @FocusState var nameFocused: Bool
     @FocusState var teacherFocused: Bool
+    @State var forceDoubleLesson = false
     var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -395,6 +416,14 @@ struct AddScheduleView: View {
                         Label("End time must be after start time", systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
                             .font(.footnote)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Toggle("Double Lesson", isOn: $forceDoubleLesson)
+                        Text("Makes SchoolTool to treat this Class as Double Lesson")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
                     }
                 }
                 Section("Details (Optional)") {
@@ -610,7 +639,7 @@ struct AddScheduleView: View {
         var schedule = manager.schedule ?? TimeTableSchedule(id: UUID(), days: TimeTableSchedule.Days.allCases.map { TimeTableSchedule.TimeTableDay(day: $0, classes: []) })
 
         // Build new class
-        let newClass = ScheduleClass(time: selectedTime, lesson: lesson)
+        let newClass = ScheduleClass(time: selectedTime, lesson: lesson, forceDoubleLesson: forceDoubleLesson)
 
         // Insert into the correct day
         if let idx = schedule.days.firstIndex(where: { $0.day == selectedTime.day }) {
@@ -636,12 +665,13 @@ struct LessonEditorView: View {
     @State private var lesson: TimeTableLesson
     @FocusState private var nameFocused: Bool
     @FocusState private var teacherFocused: Bool
-
+    @State var forceDoubleLesson = false
     private let original: ScheduleClass
 
     init(original: ScheduleClass) {
         self._selectedTime = State(initialValue: original.time)
         self._lesson = State(initialValue: original.lesson)
+        self._forceDoubleLesson = State(initialValue: original.forceDoubleLesson ?? false)
         self.original = original
     }
     var timeFormatter: DateFormatter {
@@ -759,6 +789,14 @@ struct LessonEditorView: View {
                         Label("End time must be after start time", systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
                             .font(.footnote)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Toggle("Double Lesson", isOn: $forceDoubleLesson)
+                        Text("Makes SchoolTool to treat this Class as Double Lesson")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
                     }
                 }
                 Section("Details (Optional)") {
@@ -979,7 +1017,7 @@ struct LessonEditorView: View {
         guard let originalDayIndex = schedule.days.firstIndex(where: { $0.day == original.time.day }),
               let originalClassIndex = schedule.days[originalDayIndex].classes.firstIndex(where: { $0.id == original.id }) else { return }
 
-        let updated = ScheduleClass(id: original.id, time: selectedTime, lesson: lesson)
+        let updated = ScheduleClass(id: original.id, time: selectedTime, lesson: lesson, forceDoubleLesson: forceDoubleLesson)
 
         // If day unchanged, replace in-place then sort
         if selectedTime.day == original.time.day {
@@ -1173,11 +1211,25 @@ struct TimeTableLesson: Identifiable, Codable, Hashable {
     var color: Color
 }
 
+import AppIntents
+
 struct TimeTableSchedule: Identifiable, Codable, Hashable {
     var id = UUID()
     var days: [TimeTableDay]
 
-    enum Days: String, CaseIterable, Codable, RawRepresentable {
+    enum Days: String, CaseIterable, Codable, RawRepresentable, AppEnum {
+        static var typeDisplayRepresentation: TypeDisplayRepresentation = TypeDisplayRepresentation(name: "Day of the Week")
+        
+        static var caseDisplayRepresentations: [TimeTableSchedule.Days : DisplayRepresentation] = [
+            .monday: DisplayRepresentation(title: "Monday"),
+            .tuesday: DisplayRepresentation(title: "Tuesday"),
+            .wednesday: DisplayRepresentation(title: "Wednesday"),
+            .thursday: DisplayRepresentation(title: "Thursday"),
+            .friday: DisplayRepresentation(title: "Friday"),
+            .saturday: DisplayRepresentation(title: "Saturday"),
+            .sunday: DisplayRepresentation(title: "Sunday")
+        ]
+        
         case monday
         case tuesday
         case wednesday
@@ -1271,6 +1323,7 @@ struct ScheduleClass: Identifiable, Codable, Hashable {
     var id = UUID()
     var time: TimeTableTime
     var lesson: TimeTableLesson
+    var forceDoubleLesson: Bool? = false
 }
 
 struct TimeTableTime: Identifiable, Codable, Hashable {

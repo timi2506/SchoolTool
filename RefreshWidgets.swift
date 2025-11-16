@@ -7,7 +7,7 @@ struct RefreshWidgetsIntent: AppIntent {
     static var description: IntentDescription = "Refreshes All Widgets"
     func perform() async throws -> some IntentResult {
         WidgetCenter.shared.reloadAllTimelines()
-        return .result(value: true)
+        return .result()
     }
 }
 

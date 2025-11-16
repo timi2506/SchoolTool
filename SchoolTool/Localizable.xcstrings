@@ -21,6 +21,16 @@
         }
       }
     },
+    "%@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -121,12 +131,12 @@
         }
       }
     },
-    "Classes" : {
+    "Class" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fächer"
+            "value" : "Fach"
           }
         }
       }
@@ -151,6 +161,16 @@
         }
       }
     },
+    "Current Class" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuelle Stunde"
+          }
+        }
+      }
+    },
     "Custom Color" : {
       "localizations" : {
         "de" : {
@@ -167,6 +187,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tag"
+          }
+        }
+      }
+    },
+    "Day of the Week" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag der Woche"
           }
         }
       }
@@ -237,6 +267,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fertig"
+          }
+        }
+      }
+    },
+    "Double Lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doppelstunde"
           }
         }
       }
@@ -331,6 +371,16 @@
         }
       }
     },
+    "Gets the Current or Next Class" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gibt das nächste oder aktuelle Unterrichtsfach aus"
+          }
+        }
+      }
+    },
     "GitHub" : {
       "localizations" : {
         "de" : {
@@ -411,6 +461,16 @@
         }
       }
     },
+    "Lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fach"
+          }
+        }
+      }
+    },
     "Lesson Details" : {
       "localizations" : {
         "de" : {
@@ -441,6 +501,16 @@
         }
       }
     },
+    "Makes SchoolTool to treat this Class as Double Lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lässt SchoolTool diese Stunde als Doppelstunde behandeln"
+          }
+        }
+      }
+    },
     "Manage syncing to Watch" : {
       "localizations" : {
         "de" : {
@@ -461,12 +531,42 @@
         }
       }
     },
+    "Name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "Next Class" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächstes Fach"
+          }
+        }
+      }
+    },
     "Next Day" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nächster Tag"
+          }
+        }
+      }
+    },
+    "No Additional Information" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine weiteren Informationen"
           }
         }
       }
@@ -611,6 +711,16 @@
         }
       }
     },
+    "Return ${class}" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${class} ausgeben"
+          }
+        }
+      }
+    },
     "Right Click to Preview Page" : {
       "localizations" : {
         "de" : {
@@ -637,6 +747,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Raum %@"
+          }
+        }
+      }
+    },
+    "Room Name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raum Name"
           }
         }
       }
@@ -677,6 +797,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Fotos sichern"
+          }
+        }
+      }
+    },
+    "Schedule Class" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unterrichtsfach"
           }
         }
       }
@@ -811,6 +941,16 @@
         }
       }
     },
+    "Teacher Name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lehrername"
+          }
+        }
+      }
+    },
     "This will replace your current TimeTable and cannot be undone" : {
       "localizations" : {
         "de" : {
@@ -867,6 +1007,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stundenplan"
+          }
+        }
+      }
+    },
+    "TimeTable Lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unterrichtsstunde"
           }
         }
       }
