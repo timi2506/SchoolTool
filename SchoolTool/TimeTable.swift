@@ -1365,6 +1365,6 @@ struct TimeOfDay: Codable, Hashable {
 }
 
 extension UserDefaults {
-    static var shared = UserDefaults(suiteName: "group.timi2506.SchoolTool")!
+    static var shared = UserDefaults(suiteName: "group.timi2506.SchoolTool2")!
 }
 

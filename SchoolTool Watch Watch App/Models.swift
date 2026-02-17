@@ -276,5 +276,5 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
 }
 
 extension UserDefaults {
-    static var shared = UserDefaults(suiteName: "group.timi2506.SchoolTool")!
+    static var shared = UserDefaults(suiteName: "group.timi2506.SchoolTool2")!
 }
