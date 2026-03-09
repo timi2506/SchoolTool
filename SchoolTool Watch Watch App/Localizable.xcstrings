@@ -2,15 +2,17 @@
   "sourceLanguage" : "en",
   "strings" : {
     "@timi2506" : {
-
-    },
-    "%@" : {
-      "extractionState" : "stale",
       "localizations" : {
-        "de" : {
+        "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@"
+            "value" : "@timi2506"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "@timi2506"
           }
         }
       }
@@ -139,17 +141,6 @@
     },
     "No Classes" : {
 
-    },
-    "No Classes yet" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Fächer vorhanden"
-          }
-        }
-      }
     },
     "No Schedule yet" : {
       "localizations" : {

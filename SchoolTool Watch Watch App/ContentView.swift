@@ -109,7 +109,7 @@ struct ContentView: View {
                     Button("Force Sync") {
                         manager.request()
                     }
-                    .buttonStyle(.borderedProminent)
+                    .borderedProminent()
                     .tint(.blue)
                 }
                 .toolbar {

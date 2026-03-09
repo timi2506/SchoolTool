@@ -125,17 +125,6 @@ struct TimeTableWidgetView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            Button(intent: RefreshWidgetsIntent()) {
-                HStack {
-                    Image(systemName: "arrow.clockwise")
-                    Text("REFRESH")
-                }
-                .font(.system(size: 7.5))
-                .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .padding(.top, -10)
         }
     }
     func accessoryRectangularUnavailable() -> some View {

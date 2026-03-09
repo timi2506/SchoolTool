@@ -301,7 +301,7 @@ struct DayColumnView: View {
                     Button("Add", systemImage: "plus") {
                         addSchedule.toggle()
                     }
-                    .buttonStyle(.borderedProminent)
+                    .borderedProminent()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -524,13 +524,13 @@ struct AddScheduleView: View {
         VStack {
             HStack {
                 Button("Cancel") { dismiss() }
-                    .buttonStyle(.bordered)
+                    .bordered()
                     .buttonBorderShape(.capsule)
                 Spacer()
                 Text("Add Lesson").bold()
                 Spacer()
                 Button("Done") { addLesson() }
-                    .buttonStyle(.borderedProminent)
+                    .borderedProminent()
                     .buttonBorderShape(.capsule)
                     .disabled(lesson.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !isTimeValid)
             }
@@ -805,13 +805,13 @@ struct LessonEditorView: View {
         VStack {
             HStack {
                 Button("Cancel") { dismiss() }
-                    .buttonStyle(.bordered)
+                    .bordered()
                     .buttonBorderShape(.capsule)
                 Spacer()
                 Text("Edit Lesson").bold()
                 Spacer()
                 Button("Done") { saveEdits() }
-                    .buttonStyle(.borderedProminent)
+                    .borderedProminent()
                     .buttonBorderShape(.capsule)
                     .disabled(lesson.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !isTimeValid)
             }
@@ -1066,3 +1066,20 @@ struct LessonEditorView: View {
 #endif // canImport(SymbolPicker)
 
 #endif // !os(watchOS)
+
+extension View {
+    @ViewBuilder func bordered() -> some View {
+        if #available(iOS 26, watchOS 26, macOS 26, *) {
+            self.buttonStyle(.glass)
+        } else {
+            self.buttonStyle(.bordered)
+        }
+    }
+    @ViewBuilder func borderedProminent() -> some View {
+        if #available(iOS 26, watchOS 26, macOS 26, *) {
+            self.buttonStyle(.glassProminent)
+        } else {
+            self.buttonStyle(.borderedProminent)
+        }
+    }
+}
