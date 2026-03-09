@@ -98,25 +98,6 @@ struct LessonRowLabel: View {
     @AppStorage("fullColorRow") var fullColorRow = false
     #endif
 
-    // On watchOS the list row background is already the lesson colour gradient,
-    // so we always treat it as "full colour" and skip the dot indicator.
-    private var effectiveFullColorRow: Bool {
-        #if os(watchOS)
-        return true
-        #else
-        return fullColorRow
-        #endif
-    }
-
-    var primary: some ShapeStyle {
-        #if os(macOS)
-        effectiveFullColorRow ? item.lesson.color : .primary
-        #else
-        ShapeStyle.primary
-        #endif
-    }
-    var secondary: some ShapeStyle { primary.secondary }
-
     private var hasTeacher: Bool {
         item.lesson.teacherName?.isEmpty == false
     }
@@ -124,15 +105,15 @@ struct LessonRowLabel: View {
         item.lesson.roomName?.isEmpty == false
     }
 
-    var body: some View {
+    // Single instance of the icon/name/subtitle row.
+    private var singleRow: some View {
         HStack(alignment: .center, spacing: 10) {
             Image(systemName: item.lesson.symbol)
-                .foregroundStyle(primary)
+                .foregroundStyle(.primary)
                 .frame(width: 25)
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.lesson.name)
                     .font(.headline)
-                    .foregroundStyle(primary)
                 HStack(spacing: 8) {
                     if !hasTeacher && !hasRoom {
                         Text("No Additional Information")
@@ -142,7 +123,7 @@ struct LessonRowLabel: View {
                         if let teacher = item.lesson.teacherName, !teacher.isEmpty {
                             Text(teacher)
                                 .font(.subheadline)
-                                .foregroundStyle(secondary)
+                                .foregroundStyle(.secondary)
                         }
                         if let room = item.lesson.roomName, !room.isEmpty {
                             if hasTeacher {
@@ -150,19 +131,32 @@ struct LessonRowLabel: View {
                             }
                             Text("Room \(room)")
                                 .font(.subheadline)
-                                .foregroundStyle(secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
             }
             Spacer()
             #if !os(watchOS)
-            if !effectiveFullColorRow {
+            if !fullColorRow {
                 Circle()
                     .fill(item.lesson.color)
                     .frame(width: 10, height: 10)
             }
             #endif
+        }
+        .padding(.vertical, 10)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            singleRow
+            if item.forceDoubleLesson == true {
+                Spacer().frame(height: 5)
+                Divider()
+                Spacer().frame(height: 5)
+                singleRow
+            }
         }
     }
 }
@@ -182,37 +176,27 @@ struct LessonRow: View {
         NavigationLink {
             ClassDetailView(item: item, showEditor: $showEditor)
         } label: {
-            VStack(spacing: 0) {
-                LessonRowLabel(item: item)
-                    .padding(.vertical, 10)
-                if item.forceDoubleLesson == true {
-                    Spacer().frame(height: 5)
-                    Divider()
-                    Spacer().frame(height: 5)
-                    LessonRowLabel(item: item)
-                        .padding(.vertical, 10)
+            LessonRowLabel(item: item)
+                .contentShape(.rect)
+                .contextMenu {
+                    #if canImport(SymbolPicker)
+                    Button {
+                        showEditor = true
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    #endif
+                    Button(role: .destructive) {
+                        onDelete?()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
                 }
-            }
-            .contentShape(.rect)
-            .contextMenu {
                 #if canImport(SymbolPicker)
-                Button {
-                    showEditor = true
-                } label: {
-                    Label("Edit", systemImage: "pencil")
+                .sheet(isPresented: $showEditor) {
+                    LessonEditorView(original: item)
                 }
                 #endif
-                Button(role: .destructive) {
-                    onDelete?()
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
-            #if canImport(SymbolPicker)
-            .sheet(isPresented: $showEditor) {
-                LessonEditorView(original: item)
-            }
-            #endif
         }
         .buttonStyle(.plain)
     }
@@ -327,7 +311,7 @@ struct DayColumnView: View {
                             LessonRow(item: item) {
                                 delete(item)
                             }
-                            #if os(iOS)
+                            #if os(iOS) || os(macOS)
                             .listRowBackground(
                                 fullColorRow
                                     ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
