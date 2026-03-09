@@ -1,7 +1,11 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "@timi2506" : {
+
+    },
     "%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10,6 +14,15 @@
           }
         }
       }
+    },
+    "About" : {
+
+    },
+    "An error occurred trying to import, please try again." : {
+
+    },
+    "Appearance" : {
+
     },
     "Are you sure?" : {
       "localizations" : {
@@ -31,6 +44,12 @@
         }
       }
     },
+    "Configure the Look and Feel of SchoolTool" : {
+
+    },
+    "Continue" : {
+
+    },
     "Day of the Week" : {
       "localizations" : {
         "de" : {
@@ -51,6 +70,9 @@
         }
       }
     },
+    "Developer" : {
+
+    },
     "End Time" : {
       "localizations" : {
         "de" : {
@@ -60,6 +82,9 @@
           }
         }
       }
+    },
+    "Error Importing" : {
+
     },
     "Force Sync" : {
       "localizations" : {
@@ -81,6 +106,24 @@
         }
       }
     },
+    "Full Color Classes Rows" : {
+
+    },
+    "GitHub" : {
+
+    },
+    "Import or Export Data for Backup or Sharing" : {
+
+    },
+    "Import Selected TimeTable" : {
+
+    },
+    "Import/Export" : {
+
+    },
+    "Lesson Details" : {
+
+    },
     "Monday" : {
       "localizations" : {
         "de" : {
@@ -91,7 +134,14 @@
         }
       }
     },
+    "No Additional Information" : {
+
+    },
+    "No Classes" : {
+
+    },
     "No Classes yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -110,6 +160,9 @@
           }
         }
       }
+    },
+    "OK" : {
+
     },
     "Refresh Widgets" : {
       "localizations" : {
@@ -151,6 +204,9 @@
         }
       }
     },
+    "Room %@" : {
+
+    },
     "Saturday" : {
       "localizations" : {
         "de" : {
@@ -160,6 +216,12 @@
           }
         }
       }
+    },
+    "SchoolTool" : {
+
+    },
+    "Settings" : {
+
     },
     "Skip Empty Days" : {
       "localizations" : {
@@ -210,6 +272,9 @@
           }
         }
       }
+    },
+    "This will replace your current TimeTable and cannot be undone" : {
+
     },
     "Thursday" : {
       "localizations" : {
@@ -271,12 +336,25 @@
         }
       }
     },
+    "Twitter" : {
+
+    },
     "Use this Widget to manually refresh Widgets." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nutze dieses Widget um alle Widgets neu zu laden."
+          }
+        }
+      }
+    },
+    "Version %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@%2$@"
           }
         }
       }
@@ -290,6 +368,9 @@
           }
         }
       }
+    },
+    "Whether to Color the Entire Classes Row in the Classes Color or just show a small colored dot" : {
+
     },
     "Yes" : {
       "localizations" : {
