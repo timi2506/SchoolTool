@@ -138,6 +138,11 @@
 			path = "TimeTable Widget WatchOS";
 			sourceTree = "<group>";
 		};
+		8DCD86CC2F5F40E700BF6F99 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		8DDA960B2E7AA2DD0015D242 /* SchoolTool */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -212,6 +217,7 @@
 				8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */,
 				8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */,
 				8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */,
+				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -243,6 +249,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8D4927EE2E7F1EDD00CFFCCA /* TimeTable Widget */,
+				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 			);
 			name = "TimeTable WidgetExtension";
 			packageProductDependencies = (
@@ -265,6 +272,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8D49280A2E7F497C00CFFCCA /* TimeTable Widget WatchOS */,
+				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 			);
 			name = "TimeTable Widget WatchOSExtension";
 			packageProductDependencies = (
@@ -290,6 +298,7 @@
 				8D4927F72E7F1EE100CFFCCA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 				8DDA960B2E7AA2DD0015D242 /* SchoolTool */,
 			);
 			name = SchoolTool;
@@ -316,6 +325,7 @@
 				8D4928132E7F498000CFFCCA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 				8DF42F0F2E7EE74900DB91D8 /* SchoolTool Watch Watch App */,
 			);
 			name = "SchoolTool Watch Watch App";
