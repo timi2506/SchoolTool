@@ -28,6 +28,14 @@ struct ClassDetailView: View {
         Form {
             HStack {
                 Spacer()
+                ContentUnavailableView {
+                    Text(item.lesson.name)
+                        .font(.title)
+                        .bold()
+                    Image(systemName: item.lesson.symbol)
+                        .symbolVariant(.none)
+                        .font(.system(size: 35))
+                }
                 ContentUnavailableView(item.lesson.name, systemImage: item.lesson.symbol)
                 Spacer()
             }
