@@ -35,7 +35,7 @@ struct ContentView: View {
                                     ForEach(day.classes) { item in
                                         Section(timeRangeString(item)) {
                                             NavigationLink {
-                                                LessonDetailView(item: item)
+                                                ClassDetailView(item: item)
                                             } label: {
                                                 CompactLessonRow(item: item)
                                             }
@@ -135,96 +135,6 @@ struct ContentView: View {
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         return "\(formatter.string(from: item.time.startDate)) – \(formatter.string(from: item.time.endDate))"
-    }
-}
-
-// Compact row for class/lesson on watch – matches iOS LessonRow layout
-struct CompactLessonRow: View {
-    var item: ScheduleClass
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Image(systemName: item.lesson.symbol)
-                .foregroundStyle(item.lesson.color)
-                .frame(width: 20)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(item.lesson.name)
-                    .font(.headline)
-                    .lineLimit(1)
-                Group {
-                    if let teacher = item.lesson.teacherName, !teacher.isEmpty,
-                       let room = item.lesson.roomName, !room.isEmpty {
-                        Text("\(teacher) · Room \(room)")
-                    } else if let teacher = item.lesson.teacherName, !teacher.isEmpty {
-                        Text(teacher)
-                    } else if let room = item.lesson.roomName, !room.isEmpty {
-                        Text("Room \(room)")
-                    }
-                }
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-            }
-        }
-    }
-}
-
-// Detail for a lesson/class – matches iOS ClassDetailView layout
-struct LessonDetailView: View {
-    var item: ScheduleClass
-    var timeFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = .none
-        formatter.timeStyle = .short
-        return formatter
-    }
-
-    var body: some View {
-        Form {
-            HStack {
-                Spacer()
-                ContentUnavailableView(item.lesson.name, systemImage: item.lesson.symbol)
-                Spacer()
-            }
-            Section("Details") {
-                HStack {
-                    Text("Teacher")
-                    Spacer()
-                    Text(item.lesson.teacherName ?? "none")
-                        .foregroundStyle(.secondary)
-                }
-                HStack {
-                    Text("Room")
-                    Spacer()
-                    Text(item.lesson.roomName ?? "none")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            Section("Times") {
-                HStack {
-                    Text("Start Time")
-                    Spacer()
-                    Text(item.time.startDate, formatter: timeFormatter)
-                        .foregroundStyle(.secondary)
-                }
-                HStack {
-                    Text("End Time")
-                    Spacer()
-                    Text(item.time.endDate, formatter: timeFormatter)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .scrollContentBackground(.hidden)
-        .background(
-            LinearGradient(
-                colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)],
-                startPoint: .top,
-                endPoint: .bottom
-            ),
-            ignoresSafeAreaEdges: .all
-        )
-        .navigationTitle("Details")
     }
 }
 
