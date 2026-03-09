@@ -122,6 +122,7 @@ struct LessonRowLabel: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.lesson.name)
                     .font(.body)
+                    .bold()
                 HStack(spacing: 8) {
                     if !hasTeacher && !hasRoom {
                         Text("No Additional Information")

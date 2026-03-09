@@ -20,6 +20,12 @@
     "About" : {
 
     },
+    "About SchoolTool" : {
+
+    },
+    "All Settings related to the Time Table" : {
+
+    },
     "An error occurred trying to import, please try again." : {
 
     },
@@ -115,6 +121,9 @@
 
     },
     "Import or Export Data for Backup or Sharing" : {
+
+    },
+    "Import or Export Stuff" : {
 
     },
     "Import Selected TimeTable" : {

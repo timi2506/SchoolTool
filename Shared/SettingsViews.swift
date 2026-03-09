@@ -4,9 +4,6 @@ import UniformTypeIdentifiers
 import WatchConnectivity
 #endif
 
-// MARK: - SettingsView (iOS / tvOS only)
-
-#if os(iOS) || os(tvOS)
 struct SettingsView: View {
     var body: some View {
         NavigationView {
@@ -65,7 +62,6 @@ struct SettingsView: View {
         }
     }
 }
-#endif // os(iOS) || os(tvOS)
 
 // MARK: - AppleWatchView (iOS main app only - requires Drops/WatchConnectivity)
 
