@@ -113,16 +113,16 @@ struct LessonRowLabel: View {
                 .frame(width: 25)
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.lesson.name)
-                    .font(.headline)
+                    .font(.body)
                 HStack(spacing: 8) {
                     if !hasTeacher && !hasRoom {
                         Text("No Additional Information")
-                            .font(.subheadline)
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
                         if let teacher = item.lesson.teacherName, !teacher.isEmpty {
                             Text(teacher)
-                                .font(.subheadline)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         if let room = item.lesson.roomName, !room.isEmpty {
@@ -130,7 +130,7 @@ struct LessonRowLabel: View {
                                 Divider()
                             }
                             Text("Room \(room)")
-                                .font(.subheadline)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                     }
