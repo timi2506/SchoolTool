@@ -90,6 +90,32 @@ struct AppleWatchView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
+            Section("Logs") {
+                if manager.syncLog.isEmpty {
+                    Text("No messages yet")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(manager.syncLog) { entry in
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack {
+                                Image(systemName: entry.direction == .sent ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                                    .foregroundStyle(entry.direction == .sent ? .blue : .green)
+                                Text(entry.title)
+                                    .font(.subheadline)
+                                    .bold()
+                                Spacer()
+                                Text(entry.date, style: .time)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Text(entry.detail)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                }
+            }
         }
         .formStyle(.grouped)
         .navigationTitle("Apple Watch")

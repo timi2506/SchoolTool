@@ -239,6 +239,20 @@ struct TimeOfDay: Codable, Hashable {
     }
 }
 
+// MARK: - WCSyncLogEntry
+
+struct WCSyncLogEntry: Identifiable {
+    enum Direction { case sent, received }
+
+    let id = UUID()
+    let date: Date
+    let direction: Direction
+    /// Short user-readable title, e.g. "Sent Schedule to Watch"
+    let title: String
+    /// Human-readable description of the payload content
+    let detail: String
+}
+
 // MARK: - TimeTableManager
 
 #if os(iOS)
@@ -293,7 +307,18 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
     }
     @Published var watchAppVersionString: String?
     @Published var waitingForVersionString = false
+    @Published var syncLog: [WCSyncLogEntry] = []
     @AppStorage("watchLastSynced") var lastSynced: String?
+
+    // MARK: Log helper
+    private func appendLog(_ entry: WCSyncLogEntry) {
+        DispatchQueue.main.async {
+            self.syncLog.insert(entry, at: 0)
+            if self.syncLog.count > 100 {
+                self.syncLog = Array(self.syncLog.prefix(100))
+            }
+        }
+    }
 
     #if canImport(Drops)
     func save() {
@@ -308,6 +333,7 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
         watchAppVersionString = nil
         waitingForVersionString = true
         let messageDict = ["request": "appVersionString"]
+        let channel = WCSession.default.isReachable ? "sendMessage" : "transferUserInfo"
         if WCSession.default.isReachable {
             WCSession.default.sendMessage(messageDict, replyHandler: nil) { error in
                 print("Failed to send message", error.localizedDescription)
@@ -315,6 +341,12 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
         } else {
             WCSession.default.transferUserInfo(messageDict)
         }
+        appendLog(WCSyncLogEntry(
+            date: Date(),
+            direction: .sent,
+            title: "Requested Watch App Version",
+            detail: "Key: \"request\" = \"appVersionString\" via \(channel)"
+        ))
     }
 
     func sendToAppleWatch(_ data: Data? = nil) {
@@ -353,6 +385,15 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 lastSynced = Date().formatted(date: .long, time: .shortened)
             }
         }
+        let channel = WCSession.default.isReachable ? "sendMessage" : "transferUserInfo"
+        let dayCount = schedule?.days.count ?? 0
+        let classCount = schedule?.days.reduce(0) { $0 + $1.classes.count } ?? 0
+        appendLog(WCSyncLogEntry(
+            date: Date(),
+            direction: .sent,
+            title: "Sent Schedule to Watch",
+            detail: "\(dayCount) day(s), \(classCount) class(es), \(encodedSchedule.count) bytes via \(channel)"
+        ))
     }
     #endif
 
@@ -379,6 +420,12 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
             DispatchQueue.main.async {
                 switch request {
                 case "timetable_schedule":
+                    self.appendLog(WCSyncLogEntry(
+                        date: Date(),
+                        direction: .received,
+                        title: "Watch Requested Schedule",
+                        detail: "Key: \"request\" = \"timetable_schedule\" via sendMessage"
+                    ))
                     #if canImport(Drops)
                     self.sendToAppleWatch()
                     #endif
@@ -387,8 +434,16 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 }
             }
         } else if let appVersionString = message["appVersionString"] as? String {
-            watchAppVersionString = appVersionString
-            waitingForVersionString = false
+            DispatchQueue.main.async {
+                self.watchAppVersionString = appVersionString
+                self.waitingForVersionString = false
+                self.appendLog(WCSyncLogEntry(
+                    date: Date(),
+                    direction: .received,
+                    title: "Received Watch App Version",
+                    detail: "Version: \(appVersionString) via sendMessage"
+                ))
+            }
         }
     }
 
@@ -397,6 +452,12 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
             DispatchQueue.main.async {
                 switch request {
                 case "timetable_schedule":
+                    self.appendLog(WCSyncLogEntry(
+                        date: Date(),
+                        direction: .received,
+                        title: "Watch Requested Schedule",
+                        detail: "Key: \"request\" = \"timetable_schedule\" via transferUserInfo"
+                    ))
                     #if canImport(Drops)
                     self.sendToAppleWatch()
                     #endif
@@ -405,8 +466,16 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 }
             }
         } else if let appVersionString = userInfo["appVersionString"] as? String {
-            watchAppVersionString = appVersionString
-            waitingForVersionString = false
+            DispatchQueue.main.async {
+                self.watchAppVersionString = appVersionString
+                self.waitingForVersionString = false
+                self.appendLog(WCSyncLogEntry(
+                    date: Date(),
+                    direction: .received,
+                    title: "Received Watch App Version",
+                    detail: "Version: \(appVersionString) via transferUserInfo"
+                ))
+            }
         }
     }
 }
@@ -419,29 +488,32 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
     static let shared = TimeTableManager()
     private var cancellables = Set<AnyCancellable>()
 
+    // WidgetKit extensions always have a .appex bundle; the main app has .app.
+    private let isWidgetExtension = Bundle.main.bundleURL.pathExtension == "appex"
+
     private override init() {
         if let data = UserDefaults.shared.data(forKey: "schoolToolSchedule"),
            let existing = try? JSONDecoder().decode(TimeTableSchedule.self, from: data) {
             self.schedule = existing
         }
         super.init()
-        #if !canImport(WidgetKit)
-        // Watch main app: set up WatchConnectivity to receive schedule from iPhone
-        if WCSession.isSupported() {
-            WCSession.default.delegate = self
-            WCSession.default.activate()
-        }
-        request()
-        #else
-        // Watch widget extension: observe UserDefaults changes for auto-reload
-        NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification, object: UserDefaults.shared)
-            .sink { [weak self] _ in
-                guard let self else { return }
-                let data = UserDefaults.shared.data(forKey: "schoolToolSchedule") ?? Data()
-                self.decodeAndPublish(from: data)
+        if !isWidgetExtension {
+            // Watch main app: set up WatchConnectivity to receive schedule from iPhone
+            if WCSession.isSupported() {
+                WCSession.default.delegate = self
+                WCSession.default.activate()
             }
-            .store(in: &cancellables)
-        #endif
+            request()
+        } else {
+            // Watch widget extension: observe UserDefaults changes for auto-reload
+            NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification, object: UserDefaults.shared)
+                .sink { [weak self] _ in
+                    guard let self else { return }
+                    let data = UserDefaults.shared.data(forKey: "schoolToolSchedule") ?? Data()
+                    self.decodeAndPublish(from: data)
+                }
+                .store(in: &cancellables)
+        }
     }
 
     @Published var schedule: TimeTableSchedule?
