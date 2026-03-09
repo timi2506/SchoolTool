@@ -24,14 +24,14 @@ struct SettingsView: View {
                     } label: {
                         labelView(title: "Import/Export", symbol: "cloud.fill", symbolBG: .purple, description: "Import or Export Stuff")
                     }
-                    #if os(iOS)
+#if os(iOS)
                     NavigationLink {
                         AppleWatchView()
                     } label: {
                         labelView(title: "Apple Watch", symbol: "applewatch", symbolBG: .green, description: WCSession.default.isWatchAppInstalled ? "Manage syncing to Watch" : "Watch App not Installed")
                     }
                     .disabled(!WCSession.default.isWatchAppInstalled)
-                    #endif
+#endif
                 }
             }
         }
@@ -162,7 +162,7 @@ struct AboutView: View {
 
 struct AppearanceSettings: View {
     @AppStorage("fullColorRow") var fullColorRow = false
-
+    
     var body: some View {
         Form {
             HStack {
@@ -200,16 +200,19 @@ struct ImportExportView: View {
                 Spacer()
             }
             Section("TimeTable") {
+#if os(iOS) || os(macOS)
                 ShareLink("Export", item: makeBackupURL())
                     .buttonStyle(.plain)
                 Button("Import", systemImage: "square.and.arrow.down") {
                     importTimeTable = true
                 }
                 .buttonStyle(.plain)
+#endif
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Import/Export")
+#if os(iOS) || os(macOS)
         .fileImporter(isPresented: $importTimeTable, allowedContentTypes: [.json]) { result in
             let decoder = JSONDecoder()
             if let url = try? result.get(), url.startAccessingSecurityScopedResource(), let data = try? Data(contentsOf: url), let decoded = try? decoder.decode(TimeTableSchedule.self, from: data) {
@@ -219,6 +222,7 @@ struct ImportExportView: View {
                 importError = true
             }
         }
+#endif
         .alert("Error Importing", isPresented: $importError) {
             Button("OK", role: .cancel) { importError = false }
         } message: {

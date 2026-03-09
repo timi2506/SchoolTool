@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 import Drops
 #endif
 
+#if os(macOS) || os(iOS)
 struct PDFToolView: View {
     @State var selectedURL: URL?
     @State var isPresenting = false
@@ -50,6 +51,7 @@ struct PDFToolView: View {
                     }
                 }
                 .formStyle(.grouped)
+                #if os(macOS) || os(iOS)
                 .dropDestination(for: URL.self) { items, session in
                     if items.first?.pathExtension == "pdf" {
                         selectedURL = items.first
@@ -62,6 +64,7 @@ struct PDFToolView: View {
                         return false
                     }
                 }
+                #endif
             }
             .toolbar {
                 Button(action: {
@@ -76,6 +79,7 @@ struct PDFToolView: View {
                     Label("Save All Results", systemImage: "square.and.arrow.down")
                 }
             }
+#if os(macOS) || os(iOS)
             .fileImporter(isPresented: $isPresenting, allowedContentTypes: [.pdf]) { result in
                 do {
                     let url = try result.get()
@@ -87,6 +91,7 @@ struct PDFToolView: View {
                     errorMsg = error.localizedDescription
                 }
             }
+#endif
             .sheet(isPresented: Binding(
                 get: { selectedURL != nil },
                 set: { newValue in if !newValue { selectedURL = nil } }
@@ -98,7 +103,9 @@ struct PDFToolView: View {
             .sheet(isPresented: $saveAllResults) {
                 saveAllResultsView
             }
+            #if canImport(QuickLook)
             .quickLookPreview($quickLookItem)
+            #endif
             .navigationTitle("PDF Tool")
 #if os(macOS)
             .loadsBeforeAppear()
@@ -440,7 +447,9 @@ struct PDFImageResult: Identifiable, Hashable {
     var documentName: String
 }
 
+#if canImport(QuickLook)
 import QuickLook
+#endif
 
 struct PDFPageSelectionView: View {
     let pdfDocument: PDFDocument
@@ -489,7 +498,9 @@ struct PDFPageSelectionView: View {
                             }
                         }
                     }
+#if os(macOS) || os(iOS)
                     .listStyle(.inset)
+                    #endif
 #if os(macOS)
                     .alternatingRowBackgrounds()
                     .frame(width: 450, height: 250)
@@ -571,7 +582,9 @@ struct PDFPageSelectionView: View {
                 }
                 .padding(10)
             }
+#if canImport(QuickLook)
             .quickLookPreview($quickLookItem)
+#endif
         }
     }
     
@@ -853,3 +866,4 @@ struct LoadBeforeAppearModifier: ViewModifier {
     }
     
 }
+#endif

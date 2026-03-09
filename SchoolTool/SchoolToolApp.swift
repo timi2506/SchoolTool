@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if os(iOS) || os(macOS)
 import WidgetKit
+#endif
 
 @main
 struct SchoolToolApp: App {
@@ -52,7 +54,7 @@ func handleQuickActionItem(_ item: UIApplicationShortcutItem) {
         switch item.type {
             case "RefreshWidgets":
                 WidgetCenter.shared.reloadAllTimelines()
-                let drop = Drop(title: "Force Refresh Widgets", subtitle: "Refreshed Successfully", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .bottom)
+                let drop = Drop(title: "Force Refresh Widgets", subtitle: "Refreshed Successfully", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .top)
                 Drops.hideAll()
                 Drops.show(drop)
             default:

@@ -5,100 +5,119 @@ struct TimeTableView: View {
     @StateObject var timeTableManager = TimeTableManager.shared
 
     @State var addSchedule = false
-    @State var selectedDay: TimeTableSchedule.Days?
+    @State var selectedDay: TimeTableSchedule.Days = .today
+    
     var body: some View {
         VStack {
             if let schedule = timeTableManager.schedule {
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal) {
-                        LazyHStack(spacing: 0) {
-                            ForEach(schedule.days) { day in
-                                DayColumnView(day: day, proxy: proxy, selectedDay: $selectedDay)
-                                    .containerRelativeFrame(.horizontal)
-                                    .id(day.day)
+                if let scheduleDay = schedule.days.first(where: { $0.day == selectedDay }) {
+                    let yesterday = previousDayWithItems(before: selectedDay, in: schedule)
+                    let tomorrow = nextDayWithItems(after: selectedDay, in: schedule)
+                    
+                    DayColumnView(day: scheduleDay, selectedDay: $selectedDay, addSchedule: $addSchedule)
+                        .dragAction { side in
+                            switch side {
+                            case .left:
+                                selectedDay = yesterday
+                            case .right:
+                                selectedDay = tomorrow
                             }
                         }
-                        .scrollTargetLayout()
-                    }
-                    .scrollTargetBehavior(.paging)
-                    .scrollIndicators(.never)
-                    .scrollPosition(id: $selectedDay)
+                        .id(scheduleDay)
                 }
             } else {
                 ContentUnavailableView("Time Table not configured", systemImage: "calendar")
             }
         }
-        .navigationTitle("Time Table")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             #if os(iOS)
             EditButton()
             #endif
+#if os(macOS) || os(iOS)
             Button("Add", systemImage: "plus") {
                 addSchedule.toggle()
             }
             .labelStyle(.iconOnly)
+            #endif
         }
+#if os(macOS) || os(iOS)
         .sheet(isPresented: $addSchedule) {
-            AddScheduleView(selectedTime: .init(day: selectedDay ?? .monday, start: .init(from: Date()), end: .init(from: Date().addingTimeInterval(3600))))
+            AddScheduleView(selectedTime: .init(day: selectedDay, start: .init(from: Date()), end: .init(from: Date().addingTimeInterval(3600))))
         }
+        #endif
         .navStacked()
+    }
+    private func nextDayWithItems(after currentDay: TimeTableSchedule.Days, in schedule: TimeTableSchedule) -> TimeTableSchedule.Days {
+        var checkDay = currentDay.tomorrow
+        while checkDay != currentDay {
+            if let daySchedule = schedule.days.first(where: { $0.day == checkDay }), !daySchedule.classes.isEmpty {
+                return checkDay
+            }
+            checkDay = checkDay.tomorrow
+        }
+        return currentDay
+    }
+    
+    private func previousDayWithItems(before currentDay: TimeTableSchedule.Days, in schedule: TimeTableSchedule) -> TimeTableSchedule.Days {
+        var checkDay = currentDay.yesterday
+        while checkDay != currentDay {
+            if let daySchedule = schedule.days.first(where: { $0.day == checkDay }), !daySchedule.classes.isEmpty {
+                return checkDay
+            }
+            checkDay = checkDay.yesterday
+        }
+        return currentDay
     }
 }
 
 struct DayColumnView: View {
     @StateObject private var manager = TimeTableManager.shared
     @AppStorage("fullColorRow") var fullColorRow = false
-
+#if !os(macOS)
+    @Environment(\.editMode) var editMode
+#endif
     var day: TimeTableSchedule.TimeTableDay
-    var proxy: ScrollViewProxy
-    @Binding var selectedDay: TimeTableSchedule.Days?
-
+    @Binding var selectedDay: TimeTableSchedule.Days
+    @Binding var addSchedule: Bool
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Button("Previous Day", systemImage: "chevron.left") {
-                    withAnimation() {
-                        proxy.scrollTo(day.day.yesterday.id)
-                        selectedDay = day.day.yesterday
-                    }
-                }
-                .font(.title2).bold()
-                .labelStyle(.iconOnly)
-                Spacer()
-                Text(day.day.name)
-                    .font(.title2).bold()
-                Spacer()
-                Button("Next Day", systemImage: "chevron.right") {
-                    withAnimation() {
-                        proxy.scrollTo(day.day.tomorrow.id)
-                        selectedDay = day.day.tomorrow
-                    }
-                }
-                .font(.title2).bold()
-                .labelStyle(.iconOnly)
-            }
-            .padding()
             if day.classes.isEmpty {
-                ContentUnavailableView("No Classes yet", systemImage: "text.badge.plus", description: Text("Try adding some"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ContentUnavailableView {
+                    Label("No Classes for this Day", systemImage: "text.badge.plus")
+                } description: {
+                    Text("Try adding some")
+                } actions: {
+                    Button("Add", systemImage: "plus") {
+                        addSchedule.toggle()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Form {
-                        ForEach(day.classes) { item in
-                            Section(timeRangeString(item)) {
-                                LessonRow(item: item) {
-                                    delete(item)
-                                }
-#if os(iOS)
-                                .listRowBackground(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity( 0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom))
-#endif
+                    ForEach(day.classes) { item in
+                        Section(timeRangeString(item)) {
+                            LessonRow(item: item) {
+                                delete(item)
                             }
+#if os(iOS)
+                            .listRowBackground(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity( 0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom))
+#endif
                         }
-                        .onDelete { indexSet in
-                            delete(at: indexSet)
-                        }
+                    }
+                    .onDelete { indexSet in
+                        delete(at: indexSet)
+                    }
+                    .deleteDisabled(editMode?.wrappedValue != EditMode.active)
                 }
                 .formStyle(.grouped)
+#if os(macOS) || os(iOS)
                 .scrollContentBackground(.hidden)
+#endif
             }
         }
         .background {
@@ -109,6 +128,23 @@ struct DayColumnView: View {
             LinearGradient(colors: [.clear, .gray.opacity(0.35)], startPoint: .bottom, endPoint: .top)
                 .ignoresSafeArea(.all)
 #endif
+        }
+        .navigationTitle(day.day.name)
+        .toolbarTitleMenu {
+            let today = TimeTableSchedule.Days.today
+            Section("Today") {
+                Button(today.name, systemImage: selectedDay == today ? "checkmark" : today.icon) {
+                    selectedDay = today
+                }
+            }
+            ForEach(TimeTableSchedule.Days.allCases
+                .filter {
+                    $0 != .today
+                }, id: \.self) { day in
+                    Button(day.name, systemImage: selectedDay == day ? "checkmark" : day.icon) {
+                        selectedDay = day
+                    }
+            }
         }
     }
 
@@ -182,7 +218,9 @@ struct ClassDetailView: View {
             }
         }
         .formStyle(.grouped)
+#if os(macOS) || os(iOS)
         .scrollContentBackground(.hidden)
+#endif
         .background(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom))
         .navigationTitle("Lesson Details")
         .toolbar {
@@ -206,7 +244,7 @@ struct LessonRow: View {
     @State private var showEditor = false
 
     var primary: some ShapeStyle {
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         .primary
         #elseif os(macOS)
         fullColorRow ? item.lesson.color : .primary
@@ -232,20 +270,24 @@ struct LessonRow: View {
             }
             .contentShape(.rect)
             .contextMenu {
+#if os(iOS) || os(macOS)
                 Button {
                     showEditor = true
                 } label: {
                     Label("Edit", systemImage: "pencil")
                 }
+#endif
                 Button(role: .destructive) {
                     onDelete?()
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
             }
+#if os(iOS) || os(macOS)
             .sheet(isPresented: $showEditor) {
                 LessonEditorView(original: item)
             }
+#endif
         }
         .buttonStyle(.plain)
     }
@@ -291,6 +333,7 @@ struct LessonRow: View {
     }
 }
 
+#if os(macOS) || os(iOS)
 import SymbolPicker
 
 struct AddScheduleView: View {
@@ -1044,6 +1087,7 @@ struct LessonEditorView: View {
         dismiss()
     }
 }
+#endif
 
 extension View {
     func navStacked() -> some View {
@@ -1057,8 +1101,9 @@ extension View {
 #if canImport(WatchConnectivity)
 import WatchConnectivity
 #endif
-import Drops
 #if os(iOS)
+import Drops
+
 /// Class Holding All TimeTable Data
 class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
     // MARK: - WCSessionDelegate
@@ -1128,7 +1173,7 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
                 print("Failed to send message:", error.localizedDescription)
                 errorOccured = true
             }
-            let drop = Drop(title: "Schedule Synced to Watch", subtitle: "Apple Watch synced successfully", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .bottom)
+            let drop = Drop(title: "Schedule Synced to Watch", subtitle: "Apple Watch synced successfully", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .top)
             if !errorOccured {
                 Drops.hideAll()
                 Drops.show(drop)
@@ -1137,7 +1182,7 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
         } else {
             // fallback: send as background transfer
             WCSession.default.transferUserInfo(messageDict)
-            let drop = Drop(title: "Schedule will Sync to Watch", subtitle: "When connected", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .bottom)
+            let drop = Drop(title: "Schedule will Sync to Watch", subtitle: "When connected", icon: UIImage(systemName: "checkmark.circle.fill")!, position: .top)
             if !errorOccured {
                 Drops.hideAll()
                 Drops.show(drop)
@@ -1176,7 +1221,7 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
 }
-#elseif os(macOS)
+#elseif os(macOS) || os(tvOS)
 /// Class Holding All TimeTable Data
 class TimeTableManager: ObservableObject {
     /// Shared TimeTable Manager
@@ -1294,6 +1339,24 @@ struct TimeTableSchedule: Identifiable, Codable, Hashable {
                     return .saturday
             }
         }
+        var icon: String {
+            switch self {
+            case .monday:
+                "1.calendar"
+            case .tuesday:
+                "2.calendar"
+            case .wednesday:
+                "3.calendar"
+            case .thursday:
+                "4.calendar"
+            case .friday:
+                "5.calendar"
+            case .saturday:
+                "6.calendar"
+            case .sunday:
+                "7.calendar"
+            }
+        }
         static var today: Days {
             let weekday = Calendar.current.component(.weekday, from: Date())
             
@@ -1368,3 +1431,147 @@ extension UserDefaults {
     static var shared = UserDefaults(suiteName: "group.timi2506.SchoolTool2")!
 }
 
+#if os(macOS)
+import AppKit
+#endif
+
+extension View {
+    func dragAction(_ action: @escaping (DragActionModifier.Side) -> Void) -> some View {
+        modifier(DragActionModifier(action: action))
+    }
+}
+
+struct DragActionModifier: ViewModifier {
+    enum DragDirection {
+        case undecided
+        case horizontal
+        case vertical
+    }
+    enum Side {
+        case left
+        case right
+    }
+
+    @State private var xOffset: CGFloat = 0
+    @State private var direction: DragDirection = .undecided
+    @State private var playedHaptic = false
+    @State private var disableAllOtherGestures = false
+    @State private var dragSide: Side?
+    
+    let action: (Side) -> Void
+    
+    func body(content: Content) -> some View {
+        content
+            .transition(.scale.combined(with: .push(from: dragSide == .left ? .leading : dragSide == .right ? .trailing : .bottom)).combined(with: .opacity))
+            .blur(radius: disableAllOtherGestures ? 10 : 0)
+            .offset(x: xOffset * 0.05)
+            .contentShape(.rect)
+            .disabled(disableAllOtherGestures)
+            .scrollDisabled(disableAllOtherGestures)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { value in
+                        let dx = value.translation.width
+                        let dy = value.translation.height
+
+                        if direction == .undecided {
+                            if abs(dx) > 10 || abs(dy) > 10 {
+                                direction = abs(dx) > abs(dy) ? .horizontal : .vertical
+                            }
+                        }
+
+                        guard direction == .horizontal else { return }
+                        
+                        if !disableAllOtherGestures {
+                            withAnimation {
+                                disableAllOtherGestures = true
+                            }
+                        }
+                        withAnimation {
+                            if xOffset >= 200 && !playedHaptic {
+                                playHaptic()
+                                playedHaptic = true
+                            } else if xOffset <= -200 && !playedHaptic {
+                                playHaptic()
+                                playedHaptic = true
+                            } else if xOffset < 195 && xOffset > 0 && playedHaptic {
+                                playedHaptic = false
+                            } else if xOffset > -195 && xOffset < 0 && playedHaptic {
+                                playedHaptic = false
+                            }
+                        }
+                        
+                        withAnimation {
+                            if abs(dx) > 50 {
+                                if xOffset == 0 {
+                                    xOffset = dx
+                                } else if (xOffset > 0 && dx > 0) || (xOffset < 0 && dx < 0) {
+                                    xOffset = dx
+                                }
+                            }
+                        }
+                        
+                        let dragSide: Side = xOffset < 0 ? .right : .left
+                        if self.dragSide != dragSide {
+                            self.dragSide = dragSide
+                        }
+                        
+                    }
+                    .onEnded { _ in
+                        if direction == .horizontal  {
+                            if xOffset >= 200 {
+                                action(.left)
+                            }
+                            if xOffset <= -200 {
+                                action(.right)
+                            }
+                        }
+
+                        withAnimation(.smooth) {
+                            xOffset = 0
+                            disableAllOtherGestures = false
+                        }
+                        
+                        playedHaptic = false
+                        direction = .undecided
+                    }
+            )
+            .overlay(alignment: .leading) {
+                Image(systemName: "chevron.left")
+                    .padding()
+                    .background {
+                        Circle()
+                            .foregroundStyle(.ultraThickMaterial)
+                            .blur(radius: playedHaptic ? 0 : 10)
+                            .overlay {
+                                Circle()
+                                    .stroke(.gray.opacity(playedHaptic ? 0.25 : 0))
+                            }
+                    }
+                    .offset(x: (xOffset * 0.5) - 75)
+                    .opacity(xOffset == 0 ? 0 : 1)
+            }
+            .overlay(alignment: .trailing) {
+                Image(systemName: "chevron.right")
+                    .padding()
+                    .background {
+                        Circle()
+                            .foregroundStyle(.ultraThickMaterial)
+                            .blur(radius: playedHaptic ? 0 : 10)
+                    }
+                    .offset(x: (xOffset * 0.5) + 75)
+                    .opacity(xOffset == 0 ? 0 : 1)
+            }
+    }
+        
+    private func playHaptic() {
+        #if os(iOS)
+        let gen = UIImpactFeedbackGenerator(style: .heavy)
+        gen.impactOccurred()
+        #elseif os(macOS)
+        NSHapticFeedbackManager.defaultPerformer.perform(.levelChange, performanceTime: .now)
+
+#endif
+    }
+
+}

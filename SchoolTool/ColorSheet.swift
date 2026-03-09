@@ -2,7 +2,7 @@ import SwiftUI
 
 extension Color {
     static var darkGray: Color {
-        #if os(iOS)
+#if os(iOS) || os(tvOS)
         return Color(uiColor: .darkGray)
         #elseif os(macOS)
         return Color(nsColor: .darkGray)
@@ -44,10 +44,12 @@ struct ColorSheet: View {
             }
             .padding(.horizontal)
             .toolbar {
+                #if os(iOS) || os(macOS)
                 ToolbarItem(placement: .cancellationAction) {
                     ColorPicker("Custom Color", selection: $color, supportsOpacity: false)
                         .labelsHidden()
                 }
+                #endif
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         dismiss()

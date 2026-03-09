@@ -12,15 +12,17 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
+#if os(macOS) || os(iOS)
             PDFToolView()
                 .tabItem {
                     Label("PDF Tool", systemImage: "document")
                 }
+#endif
             TimeTableView()
                 .tabItem {
                     Label("Time Table", systemImage: "calendar")
                 }
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")

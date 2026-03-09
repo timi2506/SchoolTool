@@ -1,5 +1,6 @@
 import SwiftUI
 import AppIntents
+#if canImport(WidgetKit)
 import WidgetKit
 
 struct RefreshWidgetsIntent: AppIntent {
@@ -120,3 +121,4 @@ extension Date {
         return Calendar.current.date(from: components)!
     }
 }
+#endif
