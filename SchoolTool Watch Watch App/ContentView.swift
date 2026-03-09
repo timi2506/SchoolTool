@@ -37,7 +37,7 @@ struct ContentView: View {
                                             NavigationLink {
                                                 ClassDetailView(item: item)
                                             } label: {
-                                                CompactLessonRow(item: item)
+                                                LessonRowLabel(item: item)
                                             }
                                             .listRowBackground(
                                                 LinearGradient(

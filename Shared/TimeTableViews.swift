@@ -88,36 +88,81 @@ struct ClassDetailView: View {
     }
 }
 
-// MARK: - CompactLessonRow
-// Compact label row – used by watchOS as the NavigationLink label,
-// and available on all platforms.
+// MARK: - LessonRowLabel
+// Shared label used by both the iOS/macOS LessonRow and the watchOS NavigationLink.
+// Mirrors the full iOS labelView layout so both platforms look identical.
 
-struct CompactLessonRow: View {
+struct LessonRowLabel: View {
     var item: ScheduleClass
+    #if !os(watchOS)
+    @AppStorage("fullColorRow") var fullColorRow = false
+    #endif
+
+    // On watchOS the list row background is already the lesson colour gradient,
+    // so we always treat it as "full colour" and skip the dot indicator.
+    private var effectiveFullColorRow: Bool {
+        #if os(watchOS)
+        return true
+        #else
+        return fullColorRow
+        #endif
+    }
+
+    var primary: some ShapeStyle {
+        #if os(macOS)
+        effectiveFullColorRow ? item.lesson.color : .primary
+        #else
+        ShapeStyle.primary
+        #endif
+    }
+    var secondary: some ShapeStyle { primary.secondary }
+
+    private var hasTeacher: Bool {
+        item.lesson.teacherName?.isEmpty == false
+    }
+    private var hasRoom: Bool {
+        item.lesson.roomName?.isEmpty == false
+    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Image(systemName: item.lesson.symbol)
-                .foregroundStyle(item.lesson.color)
-                .frame(width: 20)
-            VStack(alignment: .leading, spacing: 3) {
+                .foregroundStyle(primary)
+                .frame(width: 25)
+            VStack(alignment: .leading, spacing: 5) {
                 Text(item.lesson.name)
                     .font(.headline)
-                    .lineLimit(1)
-                Group {
-                    if let teacher = item.lesson.teacherName, !teacher.isEmpty,
-                       let room = item.lesson.roomName, !room.isEmpty {
-                        Text("\(teacher) · Room \(room)")
-                    } else if let teacher = item.lesson.teacherName, !teacher.isEmpty {
-                        Text(teacher)
-                    } else if let room = item.lesson.roomName, !room.isEmpty {
-                        Text("Room \(room)")
+                    .foregroundStyle(primary)
+                HStack(spacing: 8) {
+                    if !hasTeacher && !hasRoom {
+                        Text("No Additional Information")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        if let teacher = item.lesson.teacherName, !teacher.isEmpty {
+                            Text(teacher)
+                                .font(.subheadline)
+                                .foregroundStyle(secondary)
+                        }
+                        if let room = item.lesson.roomName, !room.isEmpty {
+                            if hasTeacher {
+                                Divider()
+                            }
+                            Text("Room \(room)")
+                                .font(.subheadline)
+                                .foregroundStyle(secondary)
+                        }
                     }
                 }
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
             }
+            Spacer()
+            #if !os(watchOS)
+            if !effectiveFullColorRow {
+                Circle()
+                    .fill(item.lesson.color)
+                    .frame(width: 10, height: 10)
+            }
+            #endif
         }
     }
 }
@@ -129,32 +174,22 @@ struct CompactLessonRow: View {
 // MARK: LessonRow
 
 struct LessonRow: View {
-    @AppStorage("fullColorRow") var fullColorRow = false
     var item: ScheduleClass
     var onDelete: (() -> Void)? = nil
     @State private var showEditor = false
-
-    var primary: some ShapeStyle {
-        #if os(iOS) || os(tvOS)
-        .primary
-        #elseif os(macOS)
-        fullColorRow ? item.lesson.color : .primary
-        #endif
-    }
-    var secondary: some ShapeStyle { primary.secondary }
 
     var body: some View {
         NavigationLink {
             ClassDetailView(item: item, showEditor: $showEditor)
         } label: {
             VStack(spacing: 0) {
-                labelView
+                LessonRowLabel(item: item)
                     .padding(.vertical, 10)
                 if item.forceDoubleLesson == true {
                     Spacer().frame(height: 5)
                     Divider()
                     Spacer().frame(height: 5)
-                    labelView
+                    LessonRowLabel(item: item)
                         .padding(.vertical, 10)
                 }
             }
@@ -180,47 +215,6 @@ struct LessonRow: View {
             #endif
         }
         .buttonStyle(.plain)
-    }
-
-    var labelView: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Image(systemName: item.lesson.symbol)
-                .foregroundStyle(primary)
-                .frame(width: 25)
-            VStack(alignment: .leading, spacing: 5) {
-                Text(item.lesson.name)
-                    .font(.headline)
-                    .foregroundStyle(primary)
-                HStack(spacing: 8) {
-                    if (item.lesson.teacherName == nil || item.lesson.teacherName?.isEmpty == true) &&
-                       (item.lesson.roomName == nil || item.lesson.roomName?.isEmpty == true) {
-                        Text("No Additional Information")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        if let teacher = item.lesson.teacherName, !teacher.isEmpty {
-                            Text(teacher)
-                                .font(.subheadline)
-                                .foregroundStyle(secondary)
-                        }
-                        if let room = item.lesson.roomName, !room.isEmpty {
-                            if !(item.lesson.teacherName == nil || item.lesson.teacherName?.isEmpty == true) {
-                                Divider()
-                            }
-                            Text("Room \(room)")
-                                .font(.subheadline)
-                                .foregroundStyle(secondary)
-                        }
-                    }
-                }
-            }
-            Spacer()
-            if !fullColorRow {
-                Circle()
-                    .fill(item.lesson.color)
-                    .frame(width: 10, height: 10)
-            }
-        }
     }
 }
 
