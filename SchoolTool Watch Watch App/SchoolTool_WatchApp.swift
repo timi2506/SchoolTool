@@ -7,12 +7,16 @@
 
 import SwiftUI
 import AppIntents
+import WidgetKit
 
 @main
 struct SchoolTool_Watch_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear {
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
         }
     }
 }

@@ -13,7 +13,19 @@
     },
     "@timi2506" : {
       "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "@timi2506"
+          }
+        },
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "@timi2506"
+          }
+        },
+        "sv" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "@timi2506"
@@ -91,15 +103,8 @@
         }
       }
     },
-    "An Error occured trying to import, please try again." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Fehler beim importieren ist aufgetreten, bitte versuche es später erneut."
-          }
-        }
-      }
+    "An error occurred trying to import, please try again." : {
+
     },
     "Appearance" : {
       "localizations" : {
@@ -321,6 +326,9 @@
         }
       }
     },
+    "ends %@" : {
+
+    },
     "Error Importing" : {
       "localizations" : {
         "de" : {
@@ -451,6 +459,26 @@
         }
       }
     },
+    "in %@, ends %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "in %1$@, ends %2$@"
+          }
+        }
+      }
+    },
+    "in %@, starts %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "in %1$@, starts %2$@"
+          }
+        }
+      }
+    },
     "Last Synced" : {
       "localizations" : {
         "de" : {
@@ -491,6 +519,9 @@
         }
       }
     },
+    "Logs" : {
+
+    },
     "Long Press to Preview Page" : {
       "localizations" : {
         "de" : {
@@ -501,15 +532,8 @@
         }
       }
     },
-    "Makes SchoolTool to treat this Class as Double Lesson" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lässt SchoolTool diese Stunde als Doppelstunde behandeln"
-          }
-        }
-      }
+    "Makes SchoolTool treat this Class as a Double Lesson" : {
+
     },
     "Manage syncing to Watch" : {
       "localizations" : {
@@ -570,6 +594,9 @@
           }
         }
       }
+    },
+    "No messages yet" : {
+
     },
     "No Results yet" : {
       "localizations" : {
@@ -880,6 +907,9 @@
           }
         }
       }
+    },
+    "starts %@" : {
+
     },
     "Suggestions will appear as you type" : {
       "localizations" : {
