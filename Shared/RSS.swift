@@ -70,7 +70,7 @@ class FeedManager: ObservableObject {
         if let data = UserDefaults.shared.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([SavedFeed].self, from: data) {
             savedFeeds = decoded
-            refreshAll()
+            Task { await performRefresh() }
         }
     }
 
@@ -83,7 +83,7 @@ class FeedManager: ObservableObject {
         let title: String? = (trimmedTitle?.isEmpty == false) ? trimmedTitle : nil
         let feed = SavedFeed(urlString: trimmed, customTitle: title)
         savedFeeds.append(feed)
-        fetchFeed(feed)
+        Task { await fetchFeed(feed) }
     }
 
     func removeFeed(id: UUID) {
@@ -92,86 +92,88 @@ class FeedManager: ObservableObject {
     }
 
     func refreshAll() {
+        Task { await performRefresh() }
+    }
+
+    /// Async version of refresh — use this in `.refreshable { }` closures.
+    func performRefresh() async {
         guard !savedFeeds.isEmpty else { return }
-        isRefreshing = true
-        let group = DispatchGroup()
-        for feed in savedFeeds {
-            group.enter()
-            fetchFeed(feed) { group.leave() }
+        await MainActor.run { isRefreshing = true }
+        await withTaskGroup(of: Void.self) { group in
+            for feed in savedFeeds {
+                group.addTask { await self.fetchFeed(feed) }
+            }
         }
-        group.notify(queue: .main) { [weak self] in
-            self?.isRefreshing = false
-        }
+        await MainActor.run { isRefreshing = false }
     }
 
     // MARK: Fetching
 
-    func fetchFeed(_ savedFeed: SavedFeed, completion: (() -> Void)? = nil) {
+    private func fetchFeed(_ savedFeed: SavedFeed) async {
         guard let url = savedFeed.url else {
-            DispatchQueue.main.async { [weak self] in
-                self?.updateChannel(for: savedFeed, items: [], title: savedFeed.displayTitle,
+            await MainActor.run {
+                self.updateChannel(for: savedFeed, items: [], title: savedFeed.displayTitle,
                                     error: "Invalid URL")
-                completion?()
             }
             return
         }
 
-        DispatchQueue.main.async { [weak self] in
-            self?.setLoading(true, for: savedFeed)
-        }
+        await MainActor.run { self.setLoading(true, for: savedFeed) }
 
-        let parser = FeedParser(URL: url)
-        parser.parseAsync { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let feed):
-                    switch feed {
-                    case .rss(let rssFeed):
-                        let items: [FeedItem] = rssFeed.items?.compactMap { item in
-                            guard let title = item.title else { return nil }
-                            return FeedItem(
-                                title: title,
-                                summary: item.description,
-                                link: item.link.flatMap { URL(string: $0) },
-                                pubDate: item.pubDate,
-                                author: item.author
-                            )
-                        } ?? []
-                        self?.updateChannel(for: savedFeed, items: items,
-                                            title: rssFeed.title ?? savedFeed.displayTitle)
-                    case .atom(let atomFeed):
-                        let items: [FeedItem] = atomFeed.entries?.compactMap { entry in
-                            guard let title = entry.title else { return nil }
-                            return FeedItem(
-                                title: title,
-                                summary: entry.summary?.value,
-                                link: entry.links?.first?.attributes?.href.flatMap { URL(string: $0) },
-                                pubDate: entry.published,
-                                author: entry.authors?.first?.name
-                            )
-                        } ?? []
-                        self?.updateChannel(for: savedFeed, items: items,
-                                            title: atomFeed.title ?? savedFeed.displayTitle)
-                    case .json(let jsonFeed):
-                        let items: [FeedItem] = jsonFeed.items?.compactMap { item in
-                            guard let title = item.title else { return nil }
-                            return FeedItem(
-                                title: title,
-                                summary: item.contentText ?? item.contentHtml,
-                                link: item.url.flatMap { URL(string: $0) },
-                                pubDate: item.datePublished,
-                                author: item.author?.name
-                            )
-                        } ?? []
-                        self?.updateChannel(for: savedFeed, items: items,
-                                            title: jsonFeed.title ?? savedFeed.displayTitle)
-                    }
-                case .failure(let error):
-                    self?.updateChannel(for: savedFeed, items: [], title: savedFeed.displayTitle,
-                                        error: error.localizedDescription)
-                }
-                completion?()
+        do {
+            let feed = try await Feed(url: url)
+            let (items, channelTitle) = Self.extractItems(from: feed, savedFeed: savedFeed)
+            await MainActor.run {
+                self.updateChannel(for: savedFeed, items: items, title: channelTitle)
             }
+        } catch {
+            await MainActor.run {
+                self.updateChannel(for: savedFeed, items: [], title: savedFeed.displayTitle,
+                                    error: error.localizedDescription)
+            }
+        }
+    }
+
+    private static func extractItems(from feed: Feed, savedFeed: SavedFeed) -> ([FeedItem], String) {
+        switch feed {
+        case .rss(let rssFeed):
+            let items: [FeedItem] = rssFeed.channel?.items?.compactMap { item in
+                guard let title = item.title else { return nil }
+                return FeedItem(
+                    title: title,
+                    summary: item.description,
+                    link: item.link.flatMap { URL(string: $0) },
+                    pubDate: item.pubDate,
+                    author: item.author
+                )
+            } ?? []
+            return (items, rssFeed.channel?.title ?? savedFeed.displayTitle)
+
+        case .atom(let atomFeed):
+            let items: [FeedItem] = atomFeed.entries?.compactMap { entry in
+                guard let title = entry.title else { return nil }
+                return FeedItem(
+                    title: title,
+                    summary: entry.summary,
+                    link: entry.links?.first?.attributes?.href.flatMap { URL(string: $0) },
+                    pubDate: entry.published,
+                    author: entry.authors?.first?.name
+                )
+            } ?? []
+            return (items, atomFeed.title ?? savedFeed.displayTitle)
+
+        case .json(let jsonFeed):
+            let items: [FeedItem] = jsonFeed.items?.compactMap { item in
+                guard let title = item.title else { return nil }
+                return FeedItem(
+                    title: title,
+                    summary: item.contentText ?? item.contentHtml,
+                    link: item.url.flatMap { URL(string: $0) },
+                    pubDate: item.datePublished,
+                    author: item.author?.name
+                )
+            } ?? []
+            return (items, jsonFeed.title ?? savedFeed.displayTitle)
         }
     }
 
@@ -318,7 +320,7 @@ struct FeedsView: View {
         }
         .listStyle(.insetGrouped)
         .refreshable {
-            feedManager.refreshAll()
+            await feedManager.performRefresh()
         }
     }
 
