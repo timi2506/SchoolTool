@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import Combine
+
 #if canImport(FeedKit)
 import FeedKit
+import XMLKit
 
 // MARK: - Models
 
@@ -154,13 +157,13 @@ class FeedManager: ObservableObject {
                 guard let title = entry.title else { return nil }
                 return FeedItem(
                     title: title,
-                    summary: entry.summary,
+                    summary: entry.summary?.text,
                     link: entry.links?.first?.attributes?.href.flatMap { URL(string: $0) },
                     pubDate: entry.published,
                     author: entry.authors?.first?.name
                 )
             } ?? []
-            return (items, atomFeed.title ?? savedFeed.displayTitle)
+            return (items, atomFeed.title?.text ?? savedFeed.displayTitle)
 
         case .json(let jsonFeed):
             let items: [FeedItem] = jsonFeed.items?.compactMap { item in
@@ -318,7 +321,6 @@ struct FeedsView: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
         .refreshable {
             await feedManager.performRefresh()
         }

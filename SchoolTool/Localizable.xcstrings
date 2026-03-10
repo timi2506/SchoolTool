@@ -83,6 +83,9 @@
         }
       }
     },
+    "Add Feed" : {
+
+    },
     "Add Lesson" : {
       "localizations" : {
         "de" : {
@@ -92,6 +95,9 @@
           }
         }
       }
+    },
+    "Add your favorite RSS, Atom or JSON feeds\nto stay updated." : {
+
     },
     "All Settings related to the Time Table" : {
       "localizations" : {
@@ -125,6 +131,9 @@
           }
         }
       }
+    },
+    "Article" : {
+
     },
     "Cancel" : {
       "localizations" : {
@@ -185,6 +194,9 @@
           }
         }
       }
+    },
+    "Custom Title" : {
+
     },
     "Day" : {
       "localizations" : {
@@ -329,6 +341,9 @@
     "ends %@" : {
 
     },
+    "Enter the URL of an RSS, Atom or JSON Feed" : {
+
+    },
     "Error Importing" : {
       "localizations" : {
         "de" : {
@@ -348,6 +363,12 @@
           }
         }
       }
+    },
+    "Feed URL" : {
+
+    },
+    "Feeds" : {
+
     },
     "Force Sync" : {
       "localizations" : {
@@ -398,6 +419,9 @@
           }
         }
       }
+    },
+    "https://example.com/feed.rss" : {
+
     },
     "If turned on, Photos will be saved to the Photos Library instead of the Files App" : {
       "localizations" : {
@@ -479,6 +503,9 @@
         }
       }
     },
+    "Invalid URL" : {
+
+    },
     "Last Synced" : {
       "localizations" : {
         "de" : {
@@ -488,6 +515,9 @@
           }
         }
       }
+    },
+    "Leave blank to use the feed's own title." : {
+
     },
     "Lesson" : {
       "localizations" : {
@@ -518,6 +548,9 @@
           }
         }
       }
+    },
+    "Loading…" : {
+
     },
     "Logs" : {
 
@@ -554,6 +587,9 @@
           }
         }
       }
+    },
+    "My Favorite Blog" : {
+
     },
     "Name" : {
       "localizations" : {
@@ -595,6 +631,12 @@
         }
       }
     },
+    "No Feeds Yet" : {
+
+    },
+    "No items found" : {
+
+    },
     "No messages yet" : {
 
     },
@@ -628,6 +670,9 @@
         }
       }
     },
+    "Open Feed URL" : {
+
+    },
     "Page %lld" : {
       "localizations" : {
         "de" : {
@@ -658,6 +703,9 @@
         }
       }
     },
+    "Please enter a valid feed URL starting with https:// or http://" : {
+
+    },
     "Preview Page" : {
       "localizations" : {
         "de" : {
@@ -667,6 +715,9 @@
           }
         }
       }
+    },
+    "Read Full Article" : {
+
     },
     "Recommendations" : {
       "localizations" : {
@@ -707,6 +758,9 @@
           }
         }
       }
+    },
+    "Remove Feed" : {
+
     },
     "Results" : {
       "localizations" : {

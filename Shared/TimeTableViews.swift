@@ -168,7 +168,7 @@ struct LessonRowLabel: View {
                 #endif
             }
             #if os(macOS)
-            .foregroundStyle(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : .primary)
+            .foregroundStyle(fullColorRow ? AnyShapeStyle(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)) : AnyShapeStyle(.primary))
             #endif
             Spacer()
             #if !os(watchOS)
@@ -273,12 +273,21 @@ struct TimeTableView: View {
             }
             #endif
             #if canImport(SymbolPicker)
+            #if os(macOS)
+            ToolbarItem(placement: .primaryAction) {
+                Button("Add", systemImage: "plus") {
+                    addSchedule.toggle()
+                }
+                .labelStyle(.iconOnly)
+            }
+            #else
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Add", systemImage: "plus") {
                     addSchedule.toggle()
                 }
                 .labelStyle(.iconOnly)
             }
+            #endif
             #endif
         }
         #if canImport(SymbolPicker)
