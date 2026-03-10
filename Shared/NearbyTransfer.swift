@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
-import Foundation
+import Network
+
+#if os(tvOS) || os(iOS)
+import DeviceDiscoveryUI
+#endif
 
 #if !os(watchOS)
-import MultipeerConnectivity
 
 // MARK: - Transfer Payload Models
 
@@ -23,104 +26,263 @@ struct NearbyTransferPayload: Codable {
     var feeds: [FeedTransferItem]?
 }
 
+/// Wraps payload together with the sender's human-readable device name.
+private struct TransferEnvelope: Codable {
+    var senderName: String
+    var payload: NearbyTransferPayload
+}
+
 // MARK: - NearbyTransferManager
 
-class NearbyTransferManager: NSObject, ObservableObject {
+/// Manages Bonjour advertisement (NWListener), peer discovery (NWBrowser)
+/// and data exchange (NWConnection) over TCP on the local network.
+class NearbyTransferManager: ObservableObject {
     static let shared = NearbyTransferManager()
 
-    private static let serviceType = "schooltool"
+    /// Bonjour service type advertised and browsed by all SchoolTool instances.
+    static let bonjourServiceType = "_schooltool._tcp"
 
-    private let myPeerID: MCPeerID
-    private var session: MCSession!
-    private var advertiser: MCNearbyServiceAdvertiser!
-    private var browser: MCNearbyServiceBrowser!
+    private var listener: NWListener?
+    private var browser: NWBrowser?
+    private var connections: [NWConnection] = []
 
-    @Published var discoveredPeers: [MCPeerID] = []
-    @Published var connectedPeers: [MCPeerID] = []
+    /// Peers discovered by NWBrowser (used by the custom UI on iOS 18 / macOS).
+    @Published var discoveredPeers: [(name: String, endpoint: NWEndpoint)] = []
+    /// Display names of currently connected peers.
+    @Published var connectedPeerNames: [String] = []
     @Published var isActive = false
     @Published var isSending = false
     @Published var statusMessage: String?
 
     @Published var receivedPayload: NearbyTransferPayload?
     @Published var receivedFromPeerName: String?
-    @Published var incomingInvitationFromName: String?
 
-    private var pendingInvitationHandler: ((Bool, MCSession?) -> Void)?
+    private init() {}
 
-    override init() {
+    var deviceName: String {
         #if os(macOS)
-        let name = Host.current().localizedName ?? "Mac"
+        Host.current().localizedName ?? "Mac"
         #else
-        let name = UIDevice.current.name
+        UIDevice.current.name
         #endif
-        myPeerID = MCPeerID(displayName: name)
-        super.init()
-        setupSession()
     }
 
-    private func setupSession() {
-        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
-        session.delegate = self
-        advertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: Self.serviceType)
-        advertiser.delegate = self
-        browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: Self.serviceType)
-        browser.delegate = self
-    }
-
-    var myDisplayName: String { myPeerID.displayName }
+    // MARK: - Lifecycle
 
     func start() {
         guard !isActive else { return }
-        discoveredPeers = []
-        connectedPeers = []
-        advertiser.startAdvertisingPeer()
-        browser.startBrowsingForPeers()
         isActive = true
-        statusMessage = "Searching for nearby devices…"
+        startListener()
+        startBrowser()
+        statusMessage = "Advertising as \(deviceName)…"
     }
 
     func stop() {
-        advertiser.stopAdvertisingPeer()
-        browser.stopBrowsingForPeers()
-        session.disconnect()
-        discoveredPeers = []
-        connectedPeers = []
+        listener?.cancel()
+        listener = nil
+        browser?.cancel()
+        browser = nil
+        connections.forEach { $0.cancel() }
+        connections.removeAll()
+        discoveredPeers.removeAll()
+        connectedPeerNames.removeAll()
         isActive = false
         statusMessage = nil
     }
 
-    func invite(_ peer: MCPeerID) {
-        browser.invitePeer(peer, to: session, withContext: nil, timeout: 30)
-        statusMessage = "Inviting \(peer.displayName)…"
+    // MARK: - NWListener (advertises via Bonjour, accepts incoming connections)
+
+    private func startListener() {
+        let params = NWParameters.tcp
+        params.includePeerToPeer = true
+
+        let service = NWListener.Service(
+            name: deviceName,
+            type: Self.bonjourServiceType
+        )
+
+        guard let l = try? NWListener(service: service, using: params) else { return }
+
+        l.stateUpdateHandler = { [weak self] state in
+            DispatchQueue.main.async {
+                if case .failed(let error) = state {
+                    self?.statusMessage = "Network error: \(error.localizedDescription)"
+                }
+            }
+        }
+
+        l.newConnectionHandler = { [weak self] connection in
+            DispatchQueue.main.async {
+                self?.acceptIncoming(connection)
+            }
+        }
+
+        l.start(queue: .main)
+        listener = l
     }
 
-    func acceptInvitation() {
-        pendingInvitationHandler?(true, session)
-        pendingInvitationHandler = nil
-        incomingInvitationFromName = nil
+    // MARK: - NWBrowser (discovers peers for the custom UI on iOS 18 / macOS)
+
+    private func startBrowser() {
+        let params = NWParameters.tcp
+        params.includePeerToPeer = true
+
+        let descriptor = NWBrowser.Descriptor.bonjour(
+            type: Self.bonjourServiceType,
+            domain: nil
+        )
+        let b = NWBrowser(for: descriptor, using: params)
+
+        b.browseResultsChangedHandler = { [weak self] results, _ in
+            guard let self else { return }
+            let myName = self.deviceName
+            let peers: [(name: String, endpoint: NWEndpoint)] = results.compactMap { result in
+                guard case .service(let name, _, _, _) = result.endpoint,
+                      name != myName else { return nil }
+                return (name: name, endpoint: result.endpoint)
+            }
+            DispatchQueue.main.async {
+                self.discoveredPeers = peers
+            }
+        }
+
+        b.start(queue: .main)
+        browser = b
     }
 
-    func declineInvitation() {
-        pendingInvitationHandler?(false, nil)
-        pendingInvitationHandler = nil
-        incomingInvitationFromName = nil
+    // MARK: - Outgoing connection (initiated by user selecting a peer)
+
+    func connect(to endpoint: NWEndpoint) {
+        let params = NWParameters.tcp
+        params.includePeerToPeer = true
+
+        let peerName: String
+        if case .service(let name, _, _, _) = endpoint { peerName = name } else { peerName = "Device" }
+
+        let conn = NWConnection(to: endpoint, using: params)
+        setupConnection(conn, peerName: peerName, isOutgoing: true)
+        conn.start(queue: .main)
     }
+
+    // MARK: - Incoming connection (accepted by listener)
+
+    private func acceptIncoming(_ conn: NWConnection) {
+        setupConnection(conn, peerName: "Remote Device", isOutgoing: false)
+        conn.start(queue: .main)
+    }
+
+    // MARK: - Shared connection setup
+
+    private func setupConnection(_ conn: NWConnection, peerName: String, isOutgoing: Bool) {
+        connections.append(conn)
+        if isOutgoing { statusMessage = "Connecting to \(peerName)…" }
+
+        conn.stateUpdateHandler = { [weak self] state in
+            DispatchQueue.main.async {
+                switch state {
+                case .ready:
+                    if self?.connectedPeerNames.contains(peerName) == false {
+                        self?.connectedPeerNames.append(peerName)
+                    }
+                    if isOutgoing { self?.statusMessage = "Connected to \(peerName)" }
+                    self?.receiveNextFrame(on: conn, peerName: peerName)
+                case .failed(let error):
+                    self?.connectedPeerNames.removeAll { $0 == peerName }
+                    self?.connections.removeAll { $0 === conn }
+                    if isOutgoing {
+                        self?.statusMessage = "Connection failed: \(error.localizedDescription)"
+                    }
+                case .cancelled:
+                    self?.connectedPeerNames.removeAll { $0 == peerName }
+                    self?.connections.removeAll { $0 === conn }
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+
+    // MARK: - Send (length-prefixed framing: 4-byte big-endian length + JSON body)
 
     func send(_ payload: NearbyTransferPayload) {
-        guard !connectedPeers.isEmpty else {
-            statusMessage = "No connected peers"
-            return
+        guard !connections.isEmpty else { statusMessage = "No connected peers"; return }
+        let envelope = TransferEnvelope(senderName: deviceName, payload: payload)
+        guard let body = try? JSONEncoder().encode(envelope) else {
+            statusMessage = "Encode error"; return
         }
         isSending = true
-        do {
-            let data = try JSONEncoder().encode(payload)
-            try session.send(data, toPeers: connectedPeers, with: .reliable)
-            let names = connectedPeers.map(\.displayName).joined(separator: ", ")
-            statusMessage = "Sent to \(names)"
-        } catch {
-            statusMessage = "Send failed: \(error.localizedDescription)"
+        let frame = makeFrame(body)
+        // All connections are started on the main queue, so their send completions
+        // are also delivered on the main queue — no synchronisation needed for
+        // the counter or the @Published properties.
+        let group = DispatchGroup()
+        var firstError: String?
+        for conn in connections {
+            group.enter()
+            conn.send(content: frame, completion: .contentProcessed { error in
+                if let error, firstError == nil {
+                    firstError = error.localizedDescription
+                }
+                group.leave()
+            })
         }
-        isSending = false
+        group.notify(queue: .main) { [weak self] in
+            self?.isSending = false
+            if let error = firstError {
+                self?.statusMessage = "Send error: \(error)"
+            } else {
+                let names = self?.connectedPeerNames.joined(separator: ", ") ?? "device"
+                self?.statusMessage = "Sent to \(names)"
+            }
+        }
+    }
+
+    /// Prepends a 4-byte big-endian length header to `data`.
+    private func makeFrame(_ data: Data) -> Data {
+        var bigEndian = UInt32(data.count).bigEndian
+        return Data(bytes: &bigEndian, count: 4) + data
+    }
+
+    // MARK: - Receive loop
+
+    private func receiveNextFrame(on conn: NWConnection, peerName: String) {
+        // Step 1: read the 4-byte length header
+        conn.receive(minimumIncompleteLength: 4, maximumLength: 4) { [weak self] header, _, isComplete, error in
+            guard let self else { return }
+
+            if error != nil || (isComplete && header == nil) {
+                DispatchQueue.main.async {
+                    self.connections.removeAll { $0 === conn }
+                    self.connectedPeerNames.removeAll { $0 == peerName }
+                }
+                return
+            }
+
+            guard let header, header.count == 4 else { return }
+
+            let length = header.withUnsafeBytes { UInt32(bigEndian: $0.load(as: UInt32.self)) }
+            guard length > 0, length <= 10_000_000 else {
+                // Malformed frame — keep receiving
+                self.receiveNextFrame(on: conn, peerName: peerName)
+                return
+            }
+
+            // Step 2: read `length` bytes of JSON body
+            conn.receive(
+                minimumIncompleteLength: Int(length),
+                maximumLength: Int(length)
+            ) { [weak self] body, _, _, _ in
+                if let body,
+                   let envelope = try? JSONDecoder().decode(TransferEnvelope.self, from: body) {
+                    DispatchQueue.main.async {
+                        self?.receivedPayload = envelope.payload
+                        self?.receivedFromPeerName = envelope.senderName
+                    }
+                }
+                // Continue reading the next frame
+                self?.receiveNextFrame(on: conn, peerName: peerName)
+            }
+        }
     }
 
     func clearReceived() {
@@ -129,80 +291,64 @@ class NearbyTransferManager: NSObject, ObservableObject {
     }
 }
 
-// MARK: - MCSessionDelegate
+// MARK: - DDDevicePicker wrapper (tvOS 16+ and iOS 26+)
 
-extension NearbyTransferManager: MCSessionDelegate {
-    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        DispatchQueue.main.async {
-            switch state {
-            case .connected:
-                if !self.connectedPeers.contains(peerID) {
-                    self.connectedPeers.append(peerID)
-                }
-                self.discoveredPeers.removeAll { $0 == peerID }
-                self.statusMessage = "Connected to \(peerID.displayName)"
-            case .connecting:
-                self.statusMessage = "Connecting to \(peerID.displayName)…"
-            case .notConnected:
-                self.connectedPeers.removeAll { $0 == peerID }
-                if self.isActive && !self.discoveredPeers.contains(peerID) {
-                    self.discoveredPeers.append(peerID)
-                }
-                self.statusMessage = "\(peerID.displayName) disconnected"
-            @unknown default:
-                break
-            }
-        }
+// DeviceDiscoveryUI presents a native system picker that browses for nearby
+// devices advertising the same Bonjour service and returns an NWEndpoint.
+
+#if os(tvOS) || os(iOS)
+@available(tvOS 16.0, iOS 26.0, *)
+struct DeviceDiscoveryPickerView: UIViewControllerRepresentable {
+    var onSelected: (NWEndpoint) -> Void
+    var onDismiss: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onSelected: onSelected, onDismiss: onDismiss)
     }
 
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        guard let payload = try? JSONDecoder().decode(NearbyTransferPayload.self, from: data) else { return }
-        DispatchQueue.main.async {
-            self.receivedPayload = payload
-            self.receivedFromPeerName = peerID.displayName
-        }
+    func makeUIViewController(context: Context) -> DDDevicePickerViewController {
+        let params = NWParameters.tcp
+        params.includePeerToPeer = true
+        let vc = DDDevicePickerViewController(
+            browseDescriptor: .bonjour(
+                type: NearbyTransferManager.bonjourServiceType,
+                domain: nil
+            ),
+            parameters: params
+        )
+        vc.delegate = context.coordinator
+        return vc
     }
 
-    func session(_ session: MCSession, didReceive stream: InputStream,
-                 withName streamName: String, fromPeer peerID: MCPeerID) {}
-    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String,
-                 fromPeer peerID: MCPeerID, with progress: Progress) {}
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String,
-                 fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
-}
-
-// MARK: - MCNearbyServiceAdvertiserDelegate
-
-extension NearbyTransferManager: MCNearbyServiceAdvertiserDelegate {
-    func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
-                    didReceiveInvitationFromPeer peerID: MCPeerID,
-                    withContext context: Data?,
-                    invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        DispatchQueue.main.async {
-            self.pendingInvitationHandler = invitationHandler
-            self.incomingInvitationFromName = peerID.displayName
-        }
-    }
-}
-
-// MARK: - MCNearbyServiceBrowserDelegate
-
-extension NearbyTransferManager: MCNearbyServiceBrowserDelegate {
-    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID,
-                 withDiscoveryInfo info: [String: String]?) {
-        DispatchQueue.main.async {
-            if !self.discoveredPeers.contains(peerID) && !self.connectedPeers.contains(peerID) {
-                self.discoveredPeers.append(peerID)
-            }
-        }
+    func updateUIViewController(_ vc: DDDevicePickerViewController, context: Context) {
+        context.coordinator.onSelected = onSelected
+        context.coordinator.onDismiss = onDismiss
     }
 
-    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        DispatchQueue.main.async {
-            self.discoveredPeers.removeAll { $0 == peerID }
+    class Coordinator: NSObject, DDDevicePickerViewControllerDelegate {
+        var onSelected: (NWEndpoint) -> Void
+        var onDismiss: () -> Void
+
+        init(onSelected: @escaping (NWEndpoint) -> Void, onDismiss: @escaping () -> Void) {
+            self.onSelected = onSelected
+            self.onDismiss = onDismiss
+        }
+
+        func devicePickerViewController(
+            _ devicePickerViewController: DDDevicePickerViewController,
+            didSelect endpoint: NWEndpoint
+        ) {
+            onSelected(endpoint)
+        }
+
+        func devicePickerViewControllerDidCancel(
+            _ devicePickerViewController: DDDevicePickerViewController
+        ) {
+            onDismiss()
         }
     }
 }
+#endif // os(tvOS) || os(iOS)
 
 // MARK: - NearbyTransferView
 
@@ -211,6 +357,7 @@ struct NearbyTransferView: View {
     @StateObject private var timeTableManager = TimeTableManager.shared
     @State private var includeSchedule = true
     @State private var includeFeeds = true
+    @State private var showDevicePicker = false
 
     var body: some View {
         Form {
@@ -226,7 +373,7 @@ struct NearbyTransferView: View {
             .listRowBackground(Color.clear)
 
             Section("This Device") {
-                Label(manager.myDisplayName, systemImage: "iphone")
+                Label(manager.deviceName, systemImage: "laptopcomputer.and.iphone")
                 if let status = manager.statusMessage {
                     Text(status)
                         .font(.caption)
@@ -234,33 +381,10 @@ struct NearbyTransferView: View {
                 }
             }
 
-            Section("Nearby Devices") {
-                if !manager.isActive {
-                    Text("Tap Start to search for nearby devices")
-                        .foregroundStyle(.secondary)
-                } else if manager.discoveredPeers.isEmpty && manager.connectedPeers.isEmpty {
-                    HStack(spacing: 10) {
-                        ProgressView()
-                        Text("Searching…")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                ForEach(manager.discoveredPeers, id: \.displayName) { peer in
-                    HStack {
-                        Label(peer.displayName, systemImage: "iphone.radiowaves.left.and.right")
-                        Spacer()
-                        Button("Connect") { manager.invite(peer) }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
-                    }
-                }
-                ForEach(manager.connectedPeers, id: \.displayName) { peer in
-                    Label(peer.displayName, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                }
-            }
+            // Device-discovery section varies by platform and OS version
+            deviceDiscoverySection
 
-            if !manager.connectedPeers.isEmpty {
+            if !manager.connectedPeerNames.isEmpty {
                 Section("What to Send") {
                     Toggle("Schedule", isOn: $includeSchedule)
                     #if canImport(FeedKit)
@@ -300,22 +424,97 @@ struct NearbyTransferView: View {
         }
         .onAppear { manager.start() }
         .onDisappear { manager.stop() }
-        .alert("Incoming Connection", isPresented: Binding(
-            get: { manager.incomingInvitationFromName != nil },
-            set: { if !$0 { manager.declineInvitation() } }
-        )) {
-            Button("Accept") { manager.acceptInvitation() }
-            Button("Decline", role: .cancel) { manager.declineInvitation() }
-        } message: {
-            Text("\(manager.incomingInvitationFromName ?? "A nearby device") wants to connect with SchoolTool")
-        }
+        // Received-data sheet (all platforms)
         .sheet(isPresented: Binding(
             get: { manager.receivedPayload != nil },
             set: { if !$0 { manager.clearReceived() } }
         )) {
             ReceivedTransferSheet(manager: manager)
         }
+        // System device-picker sheet (tvOS 16+ and iOS 26+)
+        #if os(tvOS) || os(iOS)
+        .sheet(isPresented: $showDevicePicker) {
+            if #available(tvOS 16.0, iOS 26.0, *) {
+                DeviceDiscoveryPickerView { endpoint in
+                    manager.connect(to: endpoint)
+                    showDevicePicker = false
+                } onDismiss: {
+                    showDevicePicker = false
+                }
+            }
+        }
+        #endif
     }
+
+    // MARK: - Adaptive device-discovery section
+
+    @ViewBuilder
+    private var deviceDiscoverySection: some View {
+        #if os(tvOS)
+        // tvOS 18+: DeviceDiscoveryUI has been available since tvOS 16
+        systemPickerSection
+        #elseif os(iOS)
+        if #available(iOS 26.0, *) {
+            // iOS 26+: DeviceDiscoveryUI available
+            systemPickerSection
+        } else {
+            // iOS 18 and below: custom NWBrowser peer list
+            customBrowseSection
+        }
+        #else
+        // macOS: custom NWBrowser peer list
+        customBrowseSection
+        #endif
+    }
+
+    /// Shows connected peers plus a button that opens the system DDDevicePicker.
+    @ViewBuilder
+    private var systemPickerSection: some View {
+        Section("Nearby Devices") {
+            ForEach(manager.connectedPeerNames, id: \.self) { name in
+                Label(name, systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            }
+            Button {
+                showDevicePicker = true
+            } label: {
+                Label("Browse for Devices…", systemImage: "wifi")
+            }
+            .disabled(!manager.isActive)
+        }
+    }
+
+    /// Shows NWBrowser-discovered peers in a list the user can tap to connect.
+    @ViewBuilder
+    private var customBrowseSection: some View {
+        Section("Nearby Devices") {
+            if !manager.isActive {
+                Text("Tap Start to search for nearby devices")
+                    .foregroundStyle(.secondary)
+            } else if manager.discoveredPeers.isEmpty && manager.connectedPeerNames.isEmpty {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Searching…")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            ForEach(manager.discoveredPeers, id: \.name) { peer in
+                HStack {
+                    Label(peer.name, systemImage: "iphone.radiowaves.left.and.right")
+                    Spacer()
+                    Button("Connect") { manager.connect(to: peer.endpoint) }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                }
+            }
+            ForEach(manager.connectedPeerNames, id: \.self) { name in
+                Label(name, systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            }
+        }
+    }
+
+    // MARK: - Helpers
 
     private func sendData() {
         var payload = NearbyTransferPayload()
@@ -373,7 +572,9 @@ struct ReceivedTransferSheet: View {
                             Button("Merge Feeds") {
                                 let existing = FeedManager.shared.savedFeeds
                                 let toAdd = feeds
-                                    .filter { item in !existing.contains(where: { $0.urlString == item.urlString }) }
+                                    .filter { item in
+                                        !existing.contains(where: { $0.urlString == item.urlString })
+                                    }
                                     .map { SavedFeed(urlString: $0.urlString, customTitle: $0.customTitle) }
                                 FeedManager.shared.savedFeeds.append(contentsOf: toAdd)
                                 manager.clearReceived()
