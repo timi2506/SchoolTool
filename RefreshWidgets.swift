@@ -3,11 +3,16 @@ import AppIntents
 #if canImport(WidgetKit)
 import WidgetKit
 
+
 struct RefreshWidgetsIntent: AppIntent {
     static var title: LocalizedStringResource = "Refresh Widgets"
     static var description: IntentDescription = "Refreshes All Widgets"
+    static var openAppWhenRun = true
+    
     func perform() async throws -> some IntentResult {
-        WidgetCenter.shared.reloadAllTimelines()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
         return .result()
     }
 }

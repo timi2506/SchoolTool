@@ -26,7 +26,15 @@ struct PDFToolView: View {
                     if results.isEmpty {
                         HStack {
                             Spacer()
-                            ContentUnavailableView("No Results yet", systemImage: "document")
+                            VStack(alignment: .center) {
+                                Image(systemName: "document")
+                                    .font(.title)
+                                    .bold()
+                                    .foregroundStyle(.secondary)
+                                Text("No Results yet")
+                                    .font(.headline)
+                                    .bold()
+                            }
                             Spacer()
                         }
                     } else {
@@ -67,16 +75,20 @@ struct PDFToolView: View {
                 #endif
             }
             .toolbar {
-                Button(action: {
-                    errorMsg = nil
-                    isPresenting.toggle()
-                }) {
-                    Label("Select PDF", systemImage: "plus")
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        saveAllResults.toggle()
+                    }) {
+                        Label("Save All Results", systemImage: "square.and.arrow.down")
+                    }
                 }
-                Button(action: {
-                    saveAllResults.toggle()
-                }) {
-                    Label("Save All Results", systemImage: "square.and.arrow.down")
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        errorMsg = nil
+                        isPresenting.toggle()
+                    }) {
+                        Label("Select PDF", systemImage: "plus")
+                    }
                 }
             }
 #if os(macOS) || os(iOS)
@@ -134,7 +146,15 @@ struct PDFToolView: View {
                         if results.isEmpty {
                             HStack {
                                 Spacer()
-                                ContentUnavailableView("No Results yet", systemImage: "document")
+                                VStack(alignment: .center) {
+                                    Image(systemName: "document")
+                                        .font(.title)
+                                        .bold()
+                                        .foregroundStyle(.secondary)
+                                    Text("No Results yet")
+                                        .font(.headline)
+                                        .bold()
+                                }
                                 Spacer()
                             }
                         }

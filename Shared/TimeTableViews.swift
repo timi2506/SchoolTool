@@ -29,14 +29,15 @@ struct ClassDetailView: View {
             HStack {
                 Spacer()
                 ContentUnavailableView {
-                    Text(item.lesson.name)
-                        .font(.title)
-                        .bold()
                     Image(systemName: item.lesson.symbol)
                         .symbolVariant(.none)
                         .font(.system(size: 35))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Text(item.lesson.name)
+                        .font(.headline)
+                        .bold()
                 }
-                ContentUnavailableView(item.lesson.name, systemImage: item.lesson.symbol)
                 Spacer()
             }
             Section("Details") {
@@ -103,7 +104,7 @@ struct ClassDetailView: View {
 struct LessonRowLabel: View {
     var item: ScheduleClass
     #if !os(watchOS)
-    @AppStorage("fullColorRow") var fullColorRow = false
+    @AppStorage("fullColorRow") var fullColorRow = true
     #endif
 
     private var hasTeacher: Bool {
@@ -123,7 +124,8 @@ struct LessonRowLabel: View {
                 Text(item.lesson.name)
                     .font(.body)
                     .bold()
-                HStack(spacing: 8) {
+                #if !os(watchOS)
+                HStack(spacing: 5) {
                     if !hasTeacher && !hasRoom {
                         Text("No Additional Information")
                             .font(.caption)
@@ -144,7 +146,30 @@ struct LessonRowLabel: View {
                         }
                     }
                 }
+                #else
+                VStack(alignment: .leading, spacing: 0) {
+                    if !hasTeacher && !hasRoom {
+                        Text("No Additional Information")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        if let teacher = item.lesson.teacherName, !teacher.isEmpty {
+                            Text(teacher)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        if let room = item.lesson.roomName, !room.isEmpty {
+                            Text("Room \(room)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                #endif
             }
+            #if os(macOS)
+            .foregroundStyle(fullColorRow ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom) : .primary)
+            #endif
             Spacer()
             #if !os(watchOS)
             if !fullColorRow {
@@ -243,13 +268,17 @@ struct TimeTableView: View {
         #endif
         .toolbar {
             #if os(iOS)
-            EditButton()
+            ToolbarItem(placement: .topBarLeading) {
+                EditButton()
+            }
             #endif
             #if canImport(SymbolPicker)
-            Button("Add", systemImage: "plus") {
-                addSchedule.toggle()
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Add", systemImage: "plus") {
+                    addSchedule.toggle()
+                }
+                .labelStyle(.iconOnly)
             }
-            .labelStyle(.iconOnly)
             #endif
         }
         #if canImport(SymbolPicker)
@@ -262,6 +291,29 @@ struct TimeTableView: View {
         }
         #endif
         .navStacked()
+        .safeAreaInset(edge: .bottom) {
+            if let item = timeTableManager.currentClass {
+                HStack {
+                    Image(systemName: item.lesson.symbol)
+                    VStack(alignment: .leading) {
+                        Text(item.lesson.name)
+                        if let room = item.lesson.roomName {
+                            if item.isInProgress {
+                                Text("in \(room), ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                            } else {
+                                Text("in \(room), starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                            }
+                        } else {
+                            if item.isInProgress {
+                                Text("ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                            } else {
+                                Text("starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private func nextDayWithItems(after currentDay: TimeTableSchedule.Days, in schedule: TimeTableSchedule) -> TimeTableSchedule.Days {
@@ -291,7 +343,7 @@ struct TimeTableView: View {
 
 struct DayColumnView: View {
     @StateObject private var manager = TimeTableManager.shared
-    @AppStorage("fullColorRow") var fullColorRow = false
+    @AppStorage("fullColorRow") var fullColorRow = true
     #if !os(macOS)
     @Environment(\.editMode) var editMode
     #endif
@@ -352,13 +404,25 @@ struct DayColumnView: View {
         .toolbarTitleMenu {
             let today = TimeTableSchedule.Days.today
             Section("Today") {
-                Button(today.name, systemImage: selectedDay == today ? "checkmark" : today.icon) {
+                Button(action: {
                     selectedDay = today
+                }) {
+                    if selectedDay == today {
+                        Label(today.name, systemImage: "checkmark")
+                    } else {
+                        Text(today.name)
+                    }
                 }
             }
             ForEach(TimeTableSchedule.Days.allCases.filter { $0 != .today }, id: \.self) { day in
-                Button(day.name, systemImage: selectedDay == day ? "checkmark" : day.icon) {
+                Button(action: {
                     selectedDay = day
+                }) {
+                    if selectedDay == day {
+                        Label(day.name, systemImage: "checkmark")
+                    } else {
+                        Text(day.name)
+                    }
                 }
             }
         }
@@ -1090,5 +1154,49 @@ extension View {
         } else {
             self.buttonStyle(.borderedProminent)
         }
+    }
+}
+
+extension ScheduleClass {
+    var nextStartDate: Date {
+        let calendar = Calendar.current
+        
+        var components = calendar.dateComponents([.year, .month, .day], from: self.time.day.nextOccurenceDate)
+        components.hour = self.time.start.hour
+        components.minute = self.time.start.minute
+        components.second = 0
+        
+        return calendar.date(from: components)!
+    }
+    var nextEndDate: Date {
+        let calendar = Calendar.current
+        
+        var components = calendar.dateComponents([.year, .month, .day], from: self.time.day.nextOccurenceDate)
+        components.hour = self.time.start.hour
+        components.minute = self.time.start.minute
+        components.second = 0
+        
+        return calendar.date(from: components)!
+    }
+    
+    var isInProgress: Bool {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let start = calendar.date(
+            bySettingHour: self.time.start.hour,
+            minute: self.time.start.minute,
+            second: 0,
+            of: now
+        )!
+        
+        let end = calendar.date(
+            bySettingHour: self.time.end.hour,
+            minute: self.time.end.minute,
+            second: 0,
+            of: now
+        )!
+        
+        return now >= start && now <= end
     }
 }

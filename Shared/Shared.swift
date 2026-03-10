@@ -137,18 +137,6 @@ struct TimeTableSchedule: Identifiable, Codable, Hashable {
 
         var id: String { rawValue }
 
-        var icon: String {
-            switch self {
-            case .monday:    "1.calendar"
-            case .tuesday:   "2.calendar"
-            case .wednesday: "3.calendar"
-            case .thursday:  "4.calendar"
-            case .friday:    "5.calendar"
-            case .saturday:  "6.calendar"
-            case .sunday:    "7.calendar"
-            }
-        }
-
         var tomorrow: Days {
             switch self {
             case .monday:    .tuesday
@@ -184,6 +172,26 @@ struct TimeTableSchedule: Identifiable, Codable, Hashable {
             case 7: return .saturday
             default: return .monday
             }
+        }
+        
+        var nextOccurenceDate: Date {
+            let calendar = Calendar.current
+            
+            let today = calendar.component(.weekday, from: Date())
+            
+            let target: Int = switch self {
+            case .sunday: 1
+            case .monday: 2
+            case .tuesday: 3
+            case .wednesday: 4
+            case .thursday: 5
+            case .friday: 6
+            case .saturday: 7
+            }
+            
+            let daysUntil = (target - today + 7) % 7
+            
+            return calendar.date(byAdding: .day, value: daysUntil, to: Date())!
         }
     }
 
@@ -349,6 +357,7 @@ class TimeTableManager: NSObject, ObservableObject, WCSessionDelegate {
         ))
     }
 
+    @available(iOS 18, *)
     func sendToAppleWatch(_ data: Data? = nil) {
         let encoder = JSONEncoder()
         guard let encodedSchedule = data ?? (try? encoder.encode(schedule)) else { return }
@@ -643,6 +652,9 @@ class TimeTableManager: ObservableObject {
 // MARK: - Current / Next Class Helpers (used by widgets and shortcuts)
 
 extension TimeTableManager {
+    var currentClass: ScheduleClass? {
+        currentClass(at: Date())
+    }
     /// Returns the class currently ongoing at the given date, if any.
     func currentClass(at date: Date = Date()) -> ScheduleClass? {
         guard let schedule else { return nil }

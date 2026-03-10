@@ -18,6 +18,11 @@ struct SchoolToolApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear {
+#if os(iOS) || os(macOS)
+                    WidgetCenter.shared.reloadAllTimelines()
+#endif
+                }
         }
         #if os(macOS)
         Settings {

@@ -326,6 +326,9 @@
         }
       }
     },
+    "ends %@" : {
+
+    },
     "Error Importing" : {
       "localizations" : {
         "de" : {
@@ -452,6 +455,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Importieren/Exportieren"
+          }
+        }
+      }
+    },
+    "in %@, ends %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "in %1$@, ends %2$@"
+          }
+        }
+      }
+    },
+    "in %@, starts %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "in %1$@, starts %2$@"
           }
         }
       }
@@ -884,6 +907,9 @@
           }
         }
       }
+    },
+    "starts %@" : {
+
     },
     "Suggestions will appear as you type" : {
       "localizations" : {

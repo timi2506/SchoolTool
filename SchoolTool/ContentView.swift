@@ -9,36 +9,32 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var timeTableManager = TimeTableManager.shared
-
+    
     var body: some View {
         TabView {
+            TimeTableView()
+                .tabItem {
+                    Label("Time Table", systemImage: "calendar")
+                }
 #if os(macOS) || os(iOS)
             PDFToolView()
                 .tabItem {
                     Label("PDF Tool", systemImage: "document")
                 }
 #endif
-            TimeTableView()
-                .tabItem {
-                    Label("Time Table", systemImage: "calendar")
-                }
-            #if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS)
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
-            #endif
+#endif
         }
-        #if os(macOS)
+#if os(macOS)
         .tabViewStyle(.sidebarAdaptable)
-        #elseif os(iOS)
+#elseif os(iOS)
         .onAppear {
             timeTableManager.sendToAppleWatch()
         }
-        #endif
+#endif
     }
-}
-
-#Preview {
-    ContentView()
 }

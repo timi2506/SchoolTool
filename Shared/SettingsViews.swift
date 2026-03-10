@@ -184,7 +184,7 @@ struct AboutView: View {
 // MARK: - AppearanceSettings (all platforms)
 
 struct AppearanceSettings: View {
-    @AppStorage("fullColorRow") var fullColorRow = false
+    @AppStorage("fullColorRow") var fullColorRow = true
 
     var body: some View {
         Form {
