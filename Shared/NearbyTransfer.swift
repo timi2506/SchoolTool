@@ -366,27 +366,19 @@ struct NearbyTransferView: View {
     @ViewBuilder
     private var deviceDiscoverySection: some View {
         #if os(tvOS)
-        // tvOS 18+: DeviceDiscoveryUI has been available since tvOS 16
+        // tvOS: native SwiftUI DevicePicker (available since tvOS 16)
         systemPickerSection
-        #elseif os(iOS)
-        if #available(iOS 26.0, *) {
-            // iOS 26+: DeviceDiscoveryUI available
-            systemPickerSection
-        } else {
-            // iOS 18 and below: custom NWBrowser peer list
-            customBrowseSection
-        }
         #else
-        // macOS: custom NWBrowser peer list
+        // iOS and macOS: custom NWBrowser peer list
         customBrowseSection
         #endif
     }
 
-    /// Shows connected peers plus the native SwiftUI DevicePicker button.
+    /// Shows connected peers plus the native SwiftUI DevicePicker button (tvOS only).
     @ViewBuilder
     private var systemPickerSection: some View {
-        #if os(tvOS) || os(iOS)
-        if #available(tvOS 16.0, iOS 26.0, *) {
+        #if os(tvOS)
+        if #available(tvOS 16.0, *) {
             Section("Nearby Devices") {
                 ForEach(manager.connectedPeerNames, id: \.self) { name in
                     Label(name, systemImage: "checkmark.circle.fill")
