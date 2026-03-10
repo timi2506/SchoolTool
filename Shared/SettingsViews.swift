@@ -24,6 +24,13 @@ struct SettingsView: View {
                     } label: {
                         labelView(title: "Import/Export", symbol: "cloud.fill", symbolBG: .purple, description: "Import or Export Stuff")
                     }
+                    #if !os(watchOS)
+                    NavigationLink {
+                        NearbyTransferView()
+                    } label: {
+                        labelView(title: "Nearby Transfer", symbol: "person.2.wave.2.fill", symbolBG: .green, description: "Share with Nearby Devices")
+                    }
+                    #endif
                     #if canImport(Drops)
                     NavigationLink {
                         AppleWatchView()
@@ -217,6 +224,13 @@ struct ImportExportView: View {
     @State var importError = false
     @State var importTimeTableObject: TimeTableSchedule?
 
+    #if canImport(FeedKit)
+    @StateObject var feedManager = FeedManager.shared
+    @State var importFeeds = false
+    @State var importFeedsError = false
+    @State var importFeedsObject: [SavedFeed]?
+    #endif
+
     var body: some View {
         Form {
             HStack {
@@ -234,6 +248,18 @@ struct ImportExportView: View {
                 .buttonStyle(.plain)
                 #endif
             }
+            #if canImport(FeedKit)
+            Section("RSS Feeds") {
+                #if os(iOS) || os(macOS)
+                ShareLink("Export", item: makeFeedsBackupURL())
+                    .buttonStyle(.plain)
+                Button("Import", systemImage: "square.and.arrow.down") {
+                    importFeeds = true
+                }
+                .buttonStyle(.plain)
+                #endif
+            }
+            #endif
         }
         .formStyle(.grouped)
         .navigationTitle("Import/Export")
@@ -250,6 +276,19 @@ struct ImportExportView: View {
                 importError = true
             }
         }
+        #if canImport(FeedKit)
+        .fileImporter(isPresented: $importFeeds, allowedContentTypes: [.json]) { result in
+            if let url = try? result.get(),
+               url.startAccessingSecurityScopedResource(),
+               let data = try? Data(contentsOf: url),
+               let decoded = try? JSONDecoder().decode([SavedFeed].self, from: data) {
+                url.stopAccessingSecurityScopedResource()
+                importFeedsObject = decoded
+            } else {
+                importFeedsError = true
+            }
+        }
+        #endif
         #endif
         .alert("Error Importing", isPresented: $importError) {
             Button("OK", role: .cancel) { importError = false }
@@ -267,6 +306,32 @@ struct ImportExportView: View {
         } message: {
             Text("This will replace your current TimeTable and cannot be undone")
         }
+        #if canImport(FeedKit)
+        .alert("Error Importing Feeds", isPresented: $importFeedsError) {
+            Button("OK", role: .cancel) { importFeedsError = false }
+        } message: {
+            Text("An error occurred trying to import feeds, please try again.")
+        }
+        .alert("Import RSS Feeds", isPresented: Binding(get: { importFeedsObject != nil }, set: { _ = $0 })) {
+            Button("Replace", role: .destructive) {
+                feedManager.savedFeeds = importFeedsObject!
+                importFeedsObject = nil
+            }
+            Button("Merge") {
+                let existing = feedManager.savedFeeds
+                let toAdd = importFeedsObject!.filter { newFeed in
+                    !existing.contains(where: { $0.urlString == newFeed.urlString })
+                }
+                feedManager.savedFeeds.append(contentsOf: toAdd)
+                importFeedsObject = nil
+            }
+            Button("Cancel", role: .cancel) {
+                importFeedsObject = nil
+            }
+        } message: {
+            Text("Replace your current feeds or merge with existing ones?")
+        }
+        #endif
     }
 
     func makeBackupURL() -> URL {
@@ -278,4 +343,16 @@ struct ImportExportView: View {
         try? data?.write(to: tempURL)
         return tempURL
     }
+
+    #if canImport(FeedKit)
+    func makeFeedsBackupURL() -> URL {
+        let tempURL = URL.temporaryDirectory.appendingPathComponent(
+            "SchoolTool RSS Feeds - \(Date().formatted(date: .numeric, time: .shortened))",
+            conformingTo: .json
+        )
+        let data = try? JSONEncoder().encode(feedManager.savedFeeds)
+        try? data?.write(to: tempURL)
+        return tempURL
+    }
+    #endif
 }
