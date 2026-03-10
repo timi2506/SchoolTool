@@ -262,27 +262,18 @@ struct FeedsView: View {
     // MARK: Empty State
 
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "dot.radiowaves.up.forward")
-                .font(.system(size: 64))
-                .foregroundStyle(.blue.opacity(0.7))
-            Text("No Feeds Yet")
-                .font(.title2)
-                .fontWeight(.semibold)
-            Text("Add your favorite RSS, Atom or JSON feeds\nto stay updated.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+        ContentUnavailableView {
+            Label("No Feeds Yet", systemImage: "dot.radiowaves.up.forward")
+        } description: {
+            Text("Add RSS, Atom or JSON feeds\nto stay updated.")
+        } actions: {
             Button {
                 showAddFeed = true
             } label: {
                 Label("Add Feed", systemImage: "plus")
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
             }
-            .buttonStyle(.borderedProminent)
+            .borderedProminent()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: Feed List
@@ -500,11 +491,7 @@ struct AddFeedSheet: View {
             Form {
                 HStack {
                     Spacer()
-                    ContentUnavailableView(
-                        "Add Feed",
-                        systemImage: "dot.radiowaves.up.forward",
-                        description: Text("Enter the URL of an RSS, Atom or JSON Feed")
-                    )
+                    ContentUnavailableView("Add Feed", systemImage: "dot.radiowaves.up.forward", description: Text("Enter the URL of an RSS, Atom or JSON Feed"))
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -519,7 +506,7 @@ struct AddFeedSheet: View {
                 }
 
                 Section {
-                    TextField("My Favorite Blog", text: $customTitle)
+                    TextField("Example: itslearning Course", text: $customTitle)
                 } header: {
                     Text("Custom Title")
                 } footer: {

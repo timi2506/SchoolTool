@@ -96,7 +96,7 @@
         }
       }
     },
-    "Add your favorite RSS, Atom or JSON feeds\nto stay updated." : {
+    "Add RSS, Atom or JSON feeds\nto stay updated." : {
 
     },
     "All Settings related to the Time Table" : {
@@ -354,6 +354,9 @@
         }
       }
     },
+    "Example: itslearning Course" : {
+
+    },
     "Export" : {
       "localizations" : {
         "de" : {
@@ -587,9 +590,6 @@
           }
         }
       }
-    },
-    "My Favorite Blog" : {
-
     },
     "Name" : {
       "localizations" : {
