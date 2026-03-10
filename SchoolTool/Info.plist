@@ -15,5 +15,12 @@
 			<string>RefreshWidgets</string>
 		</dict>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Transfer Data to Nearby Devices</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_schooltool._tcp</string>
+		<string>_schooltool._udp</string>
+	</array>
 </dict>
 </plist>

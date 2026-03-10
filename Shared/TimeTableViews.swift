@@ -72,7 +72,9 @@ struct ClassDetailView: View {
         #if !os(watchOS)
         .formStyle(.grouped)
         #endif
+#if !os(tvOS)
         .scrollContentBackground(.hidden)
+        #endif
         .background(
             LinearGradient(
                 colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)],
@@ -226,7 +228,7 @@ struct LessonRow: View {
                         Label("Delete", systemImage: "trash")
                     }
                 }
-                #if canImport(SymbolPicker)
+                #if canImport(SymbolPicker) && !os(tvOS)
                 .sheet(isPresented: $showEditor) {
                     LessonEditorView(original: item)
                 }
@@ -249,14 +251,16 @@ struct TimeTableView: View {
                 if let scheduleDay = schedule.days.first(where: { $0.day == selectedDay }) {
                     let yesterday = previousDayWithItems(before: selectedDay, in: schedule)
                     let tomorrow = nextDayWithItems(after: selectedDay, in: schedule)
-
+                    
                     DayColumnView(day: scheduleDay, selectedDay: $selectedDay, addSchedule: $addSchedule)
+#if !os(tvOS)
                         .dragAction { side in
                             switch side {
                             case .left:  selectedDay = yesterday
                             case .right: selectedDay = tomorrow
                             }
                         }
+#endif
                         .id(scheduleDay)
                 }
             } else {
@@ -290,7 +294,7 @@ struct TimeTableView: View {
             #endif
             #endif
         }
-        #if canImport(SymbolPicker)
+        #if canImport(SymbolPicker) && !os(tvOS)
         .sheet(isPresented: $addSchedule) {
             AddScheduleView(selectedTime: .init(
                 day: selectedDay,
@@ -585,7 +589,8 @@ struct DragActionModifier: ViewModifier {
 
 // MARK: - Add / Edit Views (require SymbolPicker)
 
-#if canImport(SymbolPicker)
+#if canImport(SymbolPicker) && !os(tvOS)
+
 import SymbolPicker
 
 struct AddScheduleView: View {
@@ -1151,14 +1156,14 @@ struct LessonEditorView: View {
 
 extension View {
     @ViewBuilder func bordered() -> some View {
-        if #available(iOS 26, watchOS 26, macOS 26, *) {
+        if #available(iOS 26, watchOS 26, macOS 26, tvOS 26, *) {
             self.buttonStyle(.glass)
         } else {
             self.buttonStyle(.bordered)
         }
     }
     @ViewBuilder func borderedProminent() -> some View {
-        if #available(iOS 26, watchOS 26, macOS 26, *) {
+        if #available(iOS 26, watchOS 26, macOS 26, tvOS 26, *) {
             self.buttonStyle(.glassProminent)
         } else {
             self.buttonStyle(.borderedProminent)

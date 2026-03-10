@@ -43,6 +43,22 @@
         }
       }
     },
+    "%@ wants to connect with SchoolTool" : {
+
+    },
+    "%lld day(s), %lld class(es)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld day(s), %2$lld class(es)"
+          }
+        }
+      }
+    },
+    "%lld RSS feed(s)" : {
+
+    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -72,6 +88,9 @@
           }
         }
       }
+    },
+    "Accept" : {
+
     },
     "Add" : {
       "localizations" : {
@@ -108,6 +127,9 @@
           }
         }
       }
+    },
+    "An error occurred trying to import feeds, please try again." : {
+
     },
     "An error occurred trying to import, please try again." : {
 
@@ -165,6 +187,9 @@
         }
       }
     },
+    "Connect" : {
+
+    },
     "Continue" : {
       "localizations" : {
         "de" : {
@@ -217,6 +242,9 @@
           }
         }
       }
+    },
+    "Decline" : {
+
     },
     "Delete" : {
       "localizations" : {
@@ -277,6 +305,9 @@
           }
         }
       }
+    },
+    "Dismiss" : {
+
     },
     "Done" : {
       "localizations" : {
@@ -353,6 +384,9 @@
           }
         }
       }
+    },
+    "Error Importing Feeds" : {
+
     },
     "Example: itslearning Course" : {
 
@@ -466,6 +500,12 @@
         }
       }
     },
+    "Import RSS Feeds" : {
+
+    },
+    "Import Schedule" : {
+
+    },
     "Import Selected TimeTable" : {
       "localizations" : {
         "de" : {
@@ -505,6 +545,9 @@
           }
         }
       }
+    },
+    "Incoming Connection" : {
+
     },
     "Invalid URL" : {
 
@@ -581,6 +624,12 @@
         }
       }
     },
+    "Merge" : {
+
+    },
+    "Merge Feeds" : {
+
+    },
     "Monday" : {
       "localizations" : {
         "de" : {
@@ -600,6 +649,12 @@
           }
         }
       }
+    },
+    "Nearby Devices" : {
+
+    },
+    "Nearby Transfer" : {
+
     },
     "Next Class" : {
       "localizations" : {
@@ -719,6 +774,12 @@
     "Read Full Article" : {
 
     },
+    "Received Data" : {
+
+    },
+    "Received from %@" : {
+
+    },
     "Recommendations" : {
       "localizations" : {
         "de" : {
@@ -760,6 +821,15 @@
       }
     },
     "Remove Feed" : {
+
+    },
+    "Replace" : {
+
+    },
+    "Replace All Feeds" : {
+
+    },
+    "Replace your current feeds or merge with existing ones?" : {
 
     },
     "Results" : {
@@ -822,6 +892,9 @@
         }
       }
     },
+    "RSS Feeds" : {
+
+    },
     "Saturday" : {
       "localizations" : {
         "de" : {
@@ -861,6 +934,9 @@
           }
         }
       }
+    },
+    "Schedule" : {
+
     },
     "Schedule Class" : {
       "localizations" : {
@@ -902,6 +978,9 @@
         }
       }
     },
+    "Searching…" : {
+
+    },
     "Select All" : {
       "localizations" : {
         "de" : {
@@ -932,6 +1011,12 @@
         }
       }
     },
+    "Send Now" : {
+
+    },
+    "Sending…" : {
+
+    },
     "Settings" : {
       "localizations" : {
         "de" : {
@@ -941,6 +1026,15 @@
           }
         }
       }
+    },
+    "Share with Nearby Devices" : {
+
+    },
+    "Share your Schedule and Feeds with nearby SchoolTool devices" : {
+
+    },
+    "Start" : {
+
     },
     "Start Time" : {
       "localizations" : {
@@ -963,6 +1057,9 @@
       }
     },
     "starts %@" : {
+
+    },
+    "Stop" : {
 
     },
     "Suggestions will appear as you type" : {
@@ -995,6 +1092,9 @@
         }
       }
     },
+    "Tap Start to search for nearby devices" : {
+
+    },
     "Teacher" : {
       "localizations" : {
         "de" : {
@@ -1014,6 +1114,9 @@
           }
         }
       }
+    },
+    "This Device" : {
+
     },
     "This will replace your current TimeTable and cannot be undone" : {
       "localizations" : {
@@ -1183,6 +1286,9 @@
           }
         }
       }
+    },
+    "What to Send" : {
+
     },
     "Whether to Color the Entire Classes Row in the Classes Color or just show a small colored dot" : {
       "localizations" : {

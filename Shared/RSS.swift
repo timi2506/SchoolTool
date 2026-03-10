@@ -462,11 +462,13 @@ struct FeedItemDetailView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
+                #if !os(tvOS)
                 if let link = item.link {
                     ToolbarItem(placement: .primaryAction) {
                         ShareLink(item: link)
                     }
                 }
+                #endif
             }
         }
     }

@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
 		8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = 8D2CE20E2E7C42E9006962B4 /* Drops */; settings = {ATTRIBUTES = (Required, ); }; };
 		8D4927EB2E7F1EDD00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
 		8D4927ED2E7F1EDD00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
@@ -84,7 +80,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshWidgets.swift; sourceTree = "<group>"; };
 		8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TimeTable WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -218,7 +213,6 @@
 				8DDA960A2E7AA2DD0015D242 /* Products */,
 				8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */,
 				8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */,
-				8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */,
 				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 			);
 			sourceTree = "<group>";
@@ -429,7 +423,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,7 +430,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,7 +437,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,7 +444,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
