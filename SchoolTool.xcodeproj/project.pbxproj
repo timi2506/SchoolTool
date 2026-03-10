@@ -19,6 +19,7 @@
 		8D4928092E7F497C00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
 		8D4928142E7F498000CFFCCA /* TimeTable Widget WatchOSExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DACA6082E7E89D100E68BED /* SymbolPicker */; };
+		8DB67B382F6090F900EC1123 /* FeedKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8DB67B372F6090F900EC1123 /* FeedKit */; };
 		8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -181,6 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DB67B382F6090F900EC1123 /* FeedKit in Frameworks */,
 				8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */,
 				8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */,
 			);
@@ -305,6 +307,7 @@
 			packageProductDependencies = (
 				8D2CE20E2E7C42E9006962B4 /* Drops */,
 				8DACA6082E7E89D100E68BED /* SymbolPicker */,
+				8DB67B372F6090F900EC1123 /* FeedKit */,
 			);
 			productName = SchoolTool;
 			productReference = 8DDA96092E7AA2DD0015D242 /* SchoolTool.app */;
@@ -375,6 +378,7 @@
 			packageReferences = (
 				8D2CE20D2E7C42E9006962B4 /* XCRemoteSwiftPackageReference "Drops" */,
 				8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8DDA960A2E7AA2DD0015D242 /* Products */;
@@ -1048,6 +1052,14 @@
 				minimumVersion = 1.6.2;
 			};
 		};
+		8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nmdias/FeedKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1060,6 +1072,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
+		};
+		8DB67B372F6090F900EC1123 /* FeedKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */;
+			productName = FeedKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
