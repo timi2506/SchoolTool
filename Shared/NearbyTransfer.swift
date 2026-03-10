@@ -34,13 +34,13 @@ private struct TransferEnvelope: Codable {
 
 // MARK: - NearbyTransferManager
 
-/// Manages Bonjour advertisement (NWListener), peer discovery (NWBrowser)
-/// and data exchange (NWConnection) over TCP on the local network.
+/// Manages application-service advertisement (NWListener), peer discovery (NWBrowser)
+/// and data exchange (NWConnection) on the local network.
 class NearbyTransferManager: ObservableObject {
     static let shared = NearbyTransferManager()
 
-    /// Bonjour service type advertised and browsed by all SchoolTool instances.
-    static let bonjourServiceType = "_schooltool._tcp"
+    /// Application-service name shared by all SchoolTool instances.
+    static let applicationServiceName = "schooltool"
 
     private var listener: NWListener?
     private var browser: NWBrowser?
@@ -90,18 +90,13 @@ class NearbyTransferManager: ObservableObject {
         statusMessage = nil
     }
 
-    // MARK: - NWListener (advertises via Bonjour, accepts incoming connections)
+    // MARK: - NWListener (advertises via application service, accepts incoming connections)
 
     private func startListener() {
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
-
-        let service = NWListener.Service(
-            name: deviceName,
-            type: Self.bonjourServiceType
-        )
-
-        guard let l = try? NWListener(service: service, using: params) else { return }
+        guard let l = try? NWListener(
+            service: NWListener.Service(applicationService: Self.applicationServiceName),
+            using: .applicationService
+        ) else { return }
 
         l.stateUpdateHandler = { [weak self] state in
             DispatchQueue.main.async {
@@ -124,14 +119,10 @@ class NearbyTransferManager: ObservableObject {
     // MARK: - NWBrowser (discovers peers for the custom UI on iOS 18 / macOS)
 
     private func startBrowser() {
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
-
-        let descriptor = NWBrowser.Descriptor.bonjour(
-            type: Self.bonjourServiceType,
-            domain: nil
+        let b = NWBrowser(
+            for: NWBrowser.Descriptor.applicationService(name: Self.applicationServiceName),
+            using: .applicationService
         )
-        let b = NWBrowser(for: descriptor, using: params)
 
         b.browseResultsChangedHandler = { [weak self] results, _ in
             guard let self else { return }
@@ -153,13 +144,10 @@ class NearbyTransferManager: ObservableObject {
     // MARK: - Outgoing connection (initiated by user selecting a peer)
 
     func connect(to endpoint: NWEndpoint) {
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
-
         let peerName: String
         if case .service(let name, _, _, _) = endpoint { peerName = name } else { peerName = "Device" }
 
-        let conn = NWConnection(to: endpoint, using: params)
+        let conn = NWConnection(to: endpoint, using: .applicationService)
         setupConnection(conn, peerName: peerName, isOutgoing: true)
         conn.start(queue: .main)
     }
@@ -291,65 +279,6 @@ class NearbyTransferManager: ObservableObject {
     }
 }
 
-// MARK: - DDDevicePicker wrapper (tvOS 16+ and iOS 26+)
-
-// DeviceDiscoveryUI presents a native system picker that browses for nearby
-// devices advertising the same Bonjour service and returns an NWEndpoint.
-
-#if os(tvOS) || os(iOS)
-@available(tvOS 16.0, iOS 26.0, *)
-struct DeviceDiscoveryPickerView: UIViewControllerRepresentable {
-    var onSelected: (NWEndpoint) -> Void
-    var onDismiss: () -> Void
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onSelected: onSelected, onDismiss: onDismiss)
-    }
-
-    func makeUIViewController(context: Context) -> DDDevicePickerViewController {
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
-        let vc = DDDevicePickerViewController(
-            browseDescriptor: .bonjour(
-                type: NearbyTransferManager.bonjourServiceType,
-                domain: nil
-            ),
-            parameters: params
-        )
-        vc.delegate = context.coordinator
-        return vc
-    }
-
-    func updateUIViewController(_ vc: DDDevicePickerViewController, context: Context) {
-        context.coordinator.onSelected = onSelected
-        context.coordinator.onDismiss = onDismiss
-    }
-
-    class Coordinator: NSObject, DDDevicePickerViewControllerDelegate {
-        var onSelected: (NWEndpoint) -> Void
-        var onDismiss: () -> Void
-
-        init(onSelected: @escaping (NWEndpoint) -> Void, onDismiss: @escaping () -> Void) {
-            self.onSelected = onSelected
-            self.onDismiss = onDismiss
-        }
-
-        func devicePickerViewController(
-            _ devicePickerViewController: DDDevicePickerViewController,
-            didSelect endpoint: NWEndpoint
-        ) {
-            onSelected(endpoint)
-        }
-
-        func devicePickerViewControllerDidCancel(
-            _ devicePickerViewController: DDDevicePickerViewController
-        ) {
-            onDismiss()
-        }
-    }
-}
-#endif // os(tvOS) || os(iOS)
-
 // MARK: - NearbyTransferView
 
 struct NearbyTransferView: View {
@@ -357,7 +286,6 @@ struct NearbyTransferView: View {
     @StateObject private var timeTableManager = TimeTableManager.shared
     @State private var includeSchedule = true
     @State private var includeFeeds = true
-    @State private var showDevicePicker = false
 
     var body: some View {
         Form {
@@ -431,19 +359,6 @@ struct NearbyTransferView: View {
         )) {
             ReceivedTransferSheet(manager: manager)
         }
-        // System device-picker sheet (tvOS 16+ and iOS 26+)
-        #if os(tvOS) || os(iOS)
-        .sheet(isPresented: $showDevicePicker) {
-            if #available(tvOS 16.0, iOS 26.0, *) {
-                DeviceDiscoveryPickerView { endpoint in
-                    manager.connect(to: endpoint)
-                    showDevicePicker = false
-                } onDismiss: {
-                    showDevicePicker = false
-                }
-            }
-        }
-        #endif
     }
 
     // MARK: - Adaptive device-discovery section
@@ -467,21 +382,31 @@ struct NearbyTransferView: View {
         #endif
     }
 
-    /// Shows connected peers plus a button that opens the system DDDevicePicker.
+    /// Shows connected peers plus the native SwiftUI DevicePicker button.
     @ViewBuilder
     private var systemPickerSection: some View {
-        Section("Nearby Devices") {
-            ForEach(manager.connectedPeerNames, id: \.self) { name in
-                Label(name, systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+        #if os(tvOS) || os(iOS)
+        if #available(tvOS 16.0, iOS 26.0, *) {
+            Section("Nearby Devices") {
+                ForEach(manager.connectedPeerNames, id: \.self) { name in
+                    Label(name, systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+                DevicePicker(
+                    .applicationService(name: NearbyTransferManager.applicationServiceName)
+                ) { endpoint in
+                    manager.connect(to: endpoint)
+                } label: {
+                    Label("Browse for Devices…", systemImage: "wifi")
+                } fallback: {
+                    EmptyView()
+                } parameters: {
+                    .applicationService
+                }
+                .disabled(!manager.isActive)
             }
-            Button {
-                showDevicePicker = true
-            } label: {
-                Label("Browse for Devices…", systemImage: "wifi")
-            }
-            .disabled(!manager.isActive)
         }
+        #endif
     }
 
     /// Shows NWBrowser-discovered peers in a list the user can tap to connect.
