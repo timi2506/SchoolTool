@@ -35,8 +35,10 @@ private struct TransferEnvelope: Codable {
 
 // MARK: - NearbyTransferManager
 
-/// Manages application-service advertisement (NWListener), peer discovery (NWBrowser)
+/// Manages Bonjour advertisement (NWListener), peer discovery (NWBrowser)
 /// and data exchange (NWConnection) on the local network.
+/// tvOS uses the applicationService transport (for DevicePicker);
+/// iOS and macOS use _schooltool._tcp Bonjour over TCP.
 class NearbyTransferManager: ObservableObject {
     static let shared = NearbyTransferManager()
 
@@ -47,7 +49,7 @@ class NearbyTransferManager: ObservableObject {
     private var browser: NWBrowser?
     private var connections: [NWConnection] = []
 
-    /// Peers discovered by NWBrowser (used by the custom UI on iOS 18 / macOS).
+    /// Peers discovered by NWBrowser (used by the custom UI on iOS / macOS).
     @Published var discoveredPeers: [(name: String, endpoint: NWEndpoint)] = []
     /// Display names of currently connected peers.
     @Published var connectedPeerNames: [String] = []
@@ -91,13 +93,28 @@ class NearbyTransferManager: ObservableObject {
         statusMessage = nil
     }
 
-    // MARK: - NWListener (advertises via application service, accepts incoming connections)
+    // MARK: - Platform-specific network parameters
+
+    /// NWParameters for listener, browser, and connections.
+    /// tvOS uses applicationService (required by DevicePicker).
+    /// iOS and macOS use plain TCP advertised via Bonjour (_schooltool._tcp).
+    private static var transferParameters: NWParameters {
+        #if os(tvOS)
+        return .applicationService
+        #else
+        return .tcp
+        #endif
+    }
+
+    // MARK: - NWListener (advertises this device, accepts incoming connections)
 
     private func startListener() {
-        guard let l = try? NWListener(
-            service: NWListener.Service(applicationService: Self.applicationServiceName),
-            using: .applicationService
-        ) else { return }
+        #if os(tvOS)
+        let service = NWListener.Service(applicationService: Self.applicationServiceName)
+        #else
+        let service = NWListener.Service(name: deviceName, type: "_schooltool._tcp")
+        #endif
+        guard let l = try? NWListener(service: service, using: Self.transferParameters) else { return }
 
         l.stateUpdateHandler = { [weak self] state in
             DispatchQueue.main.async {
@@ -117,13 +134,18 @@ class NearbyTransferManager: ObservableObject {
         listener = l
     }
 
-    // MARK: - NWBrowser (discovers peers for the custom UI on iOS 18 / macOS)
+    // MARK: - NWBrowser (discovers peers for the custom UI on iOS / macOS)
 
     private func startBrowser() {
-        let b = NWBrowser(
-            for: NWBrowser.Descriptor.applicationService(name: Self.applicationServiceName),
-            using: .applicationService
+        #if os(tvOS)
+        let descriptor = NWBrowser.Descriptor.applicationService(name: Self.applicationServiceName)
+        #else
+        let descriptor = NWBrowser.Descriptor.bonjourWithTXTRecord(
+            type: "_schooltool._tcp",
+            domain: "local."
         )
+        #endif
+        let b = NWBrowser(for: descriptor, using: Self.transferParameters)
 
         b.browseResultsChangedHandler = { [weak self] results, _ in
             guard let self else { return }
@@ -148,7 +170,7 @@ class NearbyTransferManager: ObservableObject {
         let peerName: String
         if case .service(let name, _, _, _) = endpoint { peerName = name } else { peerName = "Device" }
 
-        let conn = NWConnection(to: endpoint, using: .applicationService)
+        let conn = NWConnection(to: endpoint, using: Self.transferParameters)
         setupConnection(conn, peerName: peerName, isOutgoing: true)
         conn.start(queue: .main)
     }
