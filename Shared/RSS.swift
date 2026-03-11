@@ -382,9 +382,11 @@ struct FeedItemRow: View {
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
+                Spacer()
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 2.5)
+        .contentShape(.rect)
     }
 
     private var cleanSummary: String? {
