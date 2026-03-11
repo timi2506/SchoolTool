@@ -31,6 +31,13 @@ struct SettingsView: View {
                         labelView(title: "Nearby Transfer", symbol: "person.2.wave.2.fill", symbolBG: .green, description: "Share with Nearby Devices")
                     }
                     #endif
+                    #if os(iOS) || os(macOS)
+                    NavigationLink {
+                        ItslearningSettingsView()
+                    } label: {
+                        labelView(title: "itslearning", symbol: "person.badge.key.fill", symbolBG: .orange, description: "Manage itslearning Accounts")
+                    }
+                    #endif
                     #if canImport(Drops)
                     NavigationLink {
                         AppleWatchView()
