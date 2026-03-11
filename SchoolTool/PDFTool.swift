@@ -75,6 +75,23 @@ struct PDFToolView: View {
                 #endif
             }
             .toolbar {
+                #if os(macOS)
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        saveAllResults.toggle()
+                    }) {
+                        Label("Save All Results", systemImage: "square.and.arrow.down")
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        errorMsg = nil
+                        isPresenting.toggle()
+                    }) {
+                        Label("Select PDF", systemImage: "plus")
+                    }
+                }
+                #else
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
                         saveAllResults.toggle()
@@ -90,6 +107,7 @@ struct PDFToolView: View {
                         Label("Select PDF", systemImage: "plus")
                     }
                 }
+                #endif
             }
 #if os(macOS) || os(iOS)
             .fileImporter(isPresented: $isPresenting, allowedContentTypes: [.pdf]) { result in

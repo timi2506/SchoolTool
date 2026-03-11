@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
-		8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */; };
 		8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = 8D2CE20E2E7C42E9006962B4 /* Drops */; settings = {ATTRIBUTES = (Required, ); }; };
 		8D4927EB2E7F1EDD00CFFCCA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */; };
 		8D4927ED2E7F1EDD00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
@@ -19,6 +15,7 @@
 		8D4928092E7F497C00CFFCCA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */; };
 		8D4928142E7F498000CFFCCA /* TimeTable Widget WatchOSExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8D4928072E7F497C00CFFCCA /* TimeTable Widget WatchOSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8DACA6082E7E89D100E68BED /* SymbolPicker */; };
+		8DB67B382F6090F900EC1123 /* FeedKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8DB67B372F6090F900EC1123 /* FeedKit */; };
 		8DF42F182E7EE74A00DB91D8 /* SchoolTool Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8DF42F0E2E7EE74900DB91D8 /* SchoolTool Watch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -83,7 +80,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshWidgets.swift; sourceTree = "<group>"; };
 		8D4927E82E7F1EDD00CFFCCA /* TimeTable WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TimeTable WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D4927EA2E7F1EDD00CFFCCA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		8D4927EC2E7F1EDD00CFFCCA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -181,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DB67B382F6090F900EC1123 /* FeedKit in Frameworks */,
 				8DACA6092E7E89D100E68BED /* SymbolPicker in Frameworks */,
 				8D2CE20F2E7C42E9006962B4 /* Drops in Frameworks */,
 			);
@@ -216,7 +213,6 @@
 				8DDA960A2E7AA2DD0015D242 /* Products */,
 				8D4929012E7FF6A900CFFCCA /* TimeTable WidgetExtension.entitlements */,
 				8D49290E2E7FF6A900CFFCCA /* TimeTable Widget WatchOSExtension.entitlements */,
-				8D2916D92E8037F4009AC027 /* RefreshWidgets.swift */,
 				8DCD86CC2F5F40E700BF6F99 /* Shared */,
 			);
 			sourceTree = "<group>";
@@ -305,6 +301,7 @@
 			packageProductDependencies = (
 				8D2CE20E2E7C42E9006962B4 /* Drops */,
 				8DACA6082E7E89D100E68BED /* SymbolPicker */,
+				8DB67B372F6090F900EC1123 /* FeedKit */,
 			);
 			productName = SchoolTool;
 			productReference = 8DDA96092E7AA2DD0015D242 /* SchoolTool.app */;
@@ -375,6 +372,7 @@
 			packageReferences = (
 				8D2CE20D2E7C42E9006962B4 /* XCRemoteSwiftPackageReference "Drops" */,
 				8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8DDA960A2E7AA2DD0015D242 /* Products */;
@@ -425,7 +423,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DB2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,7 +430,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DA2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,7 +437,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DD2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,7 +444,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D2916DC2E8037F4009AC027 /* RefreshWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,7 +480,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "TimeTable WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -535,7 +529,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "TimeTable WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -586,7 +580,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TimeTable Widget WatchOSExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TimeTable Widget WatchOS/Info.plist";
@@ -622,7 +616,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TimeTable Widget WatchOSExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TimeTable Widget WatchOS/Info.plist";
@@ -782,6 +776,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
@@ -793,8 +788,8 @@
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = NO;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
@@ -810,6 +805,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Transfer Data to Nearby Devices";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save Extracted Pages to Photos";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -848,6 +844,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
@@ -859,8 +856,8 @@
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = NO;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
@@ -876,6 +873,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Transfer Data to Nearby Devices";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save Extracted Pages to Photos";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -918,7 +916,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "SchoolTool Watch Watch App/SchoolTool Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -953,7 +951,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "SchoolTool Watch Watch App/SchoolTool Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U97UH74W24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1048,6 +1046,14 @@
 				minimumVersion = 1.6.2;
 			};
 		};
+		8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nmdias/FeedKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1060,6 +1066,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8DACA6072E7E89D100E68BED /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
+		};
+		8DB67B372F6090F900EC1123 /* FeedKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8DB67B362F6090F900EC1123 /* XCRemoteSwiftPackageReference "FeedKit" */;
+			productName = FeedKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

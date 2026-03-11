@@ -21,6 +21,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("PDF Tool", systemImage: "document")
                 }
+            FeedsView()
+                .tabItem {
+                    Label("Feeds", systemImage: "dot.radiowaves.up.forward")
+                }
 #endif
 #if os(iOS) || os(tvOS)
             SettingsView()
