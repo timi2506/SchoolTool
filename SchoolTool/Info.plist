@@ -2,6 +2,56 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconName</key>
+			<string>AppIcon</string>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>NSApplicationServices</key>
+	<dict>
+		<key>Advertises</key>
+		<array>
+			<dict>
+				<key>NSApplicationServiceIdentifier</key>
+				<string>schooltool</string>
+				<key>NSApplicationServicePlatformSupport</key>
+				<array>
+					<string>iOS</string>
+					<string>iPadOS</string>
+				</array>
+				<key>NSApplicationServiceUsageDescription</key>
+				<string>Transfer Data to Nearby Devices</string>
+			</dict>
+		</array>
+		<key>Browses</key>
+		<array>
+			<dict>
+				<key>NSApplicationServiceIdentifier</key>
+				<string>schooltool</string>
+				<key>NSApplicationServicePlatformSupport</key>
+				<array>
+					<string>iOS</string>
+					<string>iPadOS</string>
+				</array>
+				<key>NSApplicationServiceUsageDescription</key>
+				<string>Transfer Data to Nearby Devices</string>
+			</dict>
+		</array>
+	</dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_schooltool._tcp</string>
+		<string>_schooltool._udp</string>
+	</array>
 	<key>UIApplicationShortcutItems</key>
 	<array>
 		<dict>
