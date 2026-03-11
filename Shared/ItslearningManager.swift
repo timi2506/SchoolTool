@@ -293,6 +293,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         let personURL = base.appendingPathComponent("restapi/personal/person/v1")
         var request = URLRequest(url: personURL)
         request.setValue("\(tok.tokenType) \(tok.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         let (data, _) = try await URLSession.shared.data(for: request)
         return try JSONDecoder().decode(ItslearningPerson.self, from: data)
     }
@@ -308,6 +309,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         guard let endpoint = components?.url else { throw URLError(.badURL) }
         var request = URLRequest(url: endpoint)
         request.setValue("\(tok.tokenType) \(tok.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         let (data, _) = try await URLSession.shared.data(for: request)
         struct SSOResponse: Decodable { let Url: String }
         let decoded = try JSONDecoder().decode(SSOResponse.self, from: data)
@@ -318,7 +320,8 @@ class ItslearningAccountManager: NSObject, ObservableObject {
     // MARK: - Site Discovery
 
     func fetchAllSites() async throws -> [ItslearningSite] {
-        let request = URLRequest(url: URL(string: "https://itslearning.itslearning.com/restapi/sites/all/v1/")!)
+        var request = URLRequest(url: URL(string: "https://itslearning.itslearning.com/restapi/sites/all/v1/")!)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         let (data, _) = try await URLSession.shared.data(for: request)
         let response = try JSONDecoder().decode(AllItslearningSitesResponse.self, from: data)
         return response.allSites
