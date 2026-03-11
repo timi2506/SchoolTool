@@ -24,6 +24,13 @@ struct SettingsView: View {
                     } label: {
                         labelView(title: "Import/Export", symbol: "cloud.fill", symbolBG: .purple, description: "Import or Export Stuff")
                     }
+                    #if os(iOS)
+                    NavigationLink {
+                        ItslearningSettingsView()
+                    } label: {
+                        labelView(title: "itslearning", symbol: "graduationcap.fill", symbolBG: .orange, description: "Manage itslearning Accounts")
+                    }
+                    #endif
                     #if canImport(Drops)
                     NavigationLink {
                         AppleWatchView()

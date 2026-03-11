@@ -22,6 +22,12 @@ struct ContentView: View {
                     Label("PDF Tool", systemImage: "document")
                 }
 #endif
+#if os(iOS)
+            ItslearningTabView()
+                .tabItem {
+                    Label("itslearning", systemImage: "graduationcap.fill")
+                }
+#endif
 #if os(iOS) || os(tvOS)
             SettingsView()
                 .tabItem {
