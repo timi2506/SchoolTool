@@ -43,9 +43,6 @@
         }
       }
     },
-    "%@ wants to connect with SchoolTool" : {
-
-    },
     "%lld day(s), %lld class(es)" : {
       "localizations" : {
         "en" : {
@@ -88,9 +85,6 @@
           }
         }
       }
-    },
-    "Accept" : {
-
     },
     "Add" : {
       "localizations" : {
@@ -155,6 +149,9 @@
       }
     },
     "Article" : {
+
+    },
+    "Browse for Devices…" : {
 
     },
     "Cancel" : {
@@ -242,9 +239,6 @@
           }
         }
       }
-    },
-    "Decline" : {
-
     },
     "Delete" : {
       "localizations" : {
@@ -545,9 +539,6 @@
           }
         }
       }
-    },
-    "Incoming Connection" : {
-
     },
     "Invalid URL" : {
 

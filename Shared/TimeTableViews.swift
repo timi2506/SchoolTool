@@ -310,21 +310,37 @@ struct TimeTableView: View {
                     Image(systemName: item.lesson.symbol)
                     VStack(alignment: .leading) {
                         Text(item.lesson.name)
-                        if let room = item.lesson.roomName {
-                            if item.isInProgress {
-                                Text("in \(room), ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                            .bold()
+                        Group {
+                            if let room = item.lesson.roomName {
+                                if item.isInProgress {
+                                    Text("in \(room), ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                                } else {
+                                    Text("in \(room), starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                }
                             } else {
-                                Text("in \(room), starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
-                            }
-                        } else {
-                            if item.isInProgress {
-                                Text("ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
-                            } else {
-                                Text("starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                if item.isInProgress {
+                                    Text("ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                                } else {
+                                    Text("starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                }
                             }
                         }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+                .background {
+                    Capsule()
+                        .foregroundStyle(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom))
+                        .overlay {
+                            Capsule()
+                                .stroke(.gray.opacity(0.25))
+                        }
+                }
+                .padding(5)
             }
         }
     }
@@ -1186,8 +1202,8 @@ extension ScheduleClass {
         let calendar = Calendar.current
         
         var components = calendar.dateComponents([.year, .month, .day], from: self.time.day.nextOccurenceDate)
-        components.hour = self.time.start.hour
-        components.minute = self.time.start.minute
+        components.hour = self.time.end.hour
+        components.minute = self.time.end.minute
         components.second = 0
         
         return calendar.date(from: components)!

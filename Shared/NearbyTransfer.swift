@@ -7,8 +7,9 @@
 
 import SwiftUI
 import Network
+import Combine
 
-#if os(tvOS) || os(iOS)
+#if os(tvOS) 
 import DeviceDiscoveryUI
 #endif
 
