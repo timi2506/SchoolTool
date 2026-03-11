@@ -169,9 +169,6 @@ struct LessonRowLabel: View {
                 }
                 #endif
             }
-            #if os(macOS)
-            .foregroundStyle(fullColorRow ? AnyShapeStyle(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)) : AnyShapeStyle(.primary))
-            #endif
             Spacer()
             #if !os(watchOS)
             if !fullColorRow {
@@ -244,7 +241,8 @@ struct TimeTableView: View {
     @StateObject var timeTableManager = TimeTableManager.shared
     @State var addSchedule = false
     @State var selectedDay: TimeTableSchedule.Days = .today
-
+    @State private var showEditor = false
+    
     var body: some View {
         VStack {
             if let schedule = timeTableManager.schedule {
@@ -306,43 +304,69 @@ struct TimeTableView: View {
         .navStacked()
         .safeAreaInset(edge: .bottom) {
             if let item = timeTableManager.currentClass {
-                HStack {
-                    Image(systemName: item.lesson.symbol)
-                    VStack(alignment: .leading) {
-                        Text(item.lesson.name)
-                            .bold()
-                        Group {
-                            if let room = item.lesson.roomName {
-                                if item.isInProgress {
-                                    Text("in \(room), ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                NavigationLink(destination: {
+                    ClassDetailView(item: item, showEditor: $showEditor)
+                }) {
+                    HStack {
+                        Image(systemName: item.lesson.symbol)
+                        VStack(alignment: .leading) {
+                            Text(item.lesson.name)
+                                .bold()
+                            Group {
+                                if let room = item.lesson.roomName {
+                                    if item.isInProgress {
+                                        Text("in \("Room \(room)"), ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                                    } else {
+                                        Text("in \("Room \(room)"), starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                    }
                                 } else {
-                                    Text("in \(room), starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
-                                }
-                            } else {
-                                if item.isInProgress {
-                                    Text("ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
-                                } else {
-                                    Text("starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                    if item.isInProgress {
+                                        Text("ends \(item.nextEndDate.formatted(.relative(presentation: .named)))")
+                                    } else {
+                                        Text("starts \(item.nextStartDate.formatted(.relative(presentation: .named)))")
+                                    }
                                 }
                             }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                         }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                     }
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 5)
-                .background {
-                    Capsule()
-                        .foregroundStyle(LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom))
-                        .overlay {
-                            Capsule()
-                                .stroke(.gray.opacity(0.25))
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+                    .capsuleBackground(in: .capsule, interactive: true)
+                    .contentShape(.rect)
+                    .contextMenu {
+                        #if canImport(SymbolPicker)
+                        Button {
+                            showEditor = true
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
                         }
+                        #endif
+                        Button(role: .destructive) {
+                            delete(item)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    #if canImport(SymbolPicker) && !os(tvOS)
+                    .sheet(isPresented: $showEditor) {
+                        LessonEditorView(original: item)
+                    }
+                    #endif
                 }
+                .buttonStyle(.plain)
                 .padding(5)
             }
         }
+    }
+    
+    private func delete(_ item: ScheduleClass) {
+        guard var schedule = timeTableManager.schedule,
+              let dayIndex = schedule.days.firstIndex(where: { $0.day == item.time.day }),
+              let classIndex = schedule.days[dayIndex].classes.firstIndex(of: item) else { return }
+        schedule.days[dayIndex].classes.remove(at: classIndex)
+        timeTableManager.schedule = schedule
     }
 
     private func nextDayWithItems(after currentDay: TimeTableSchedule.Days, in schedule: TimeTableSchedule) -> TimeTableSchedule.Days {
@@ -368,6 +392,19 @@ struct TimeTableView: View {
     }
 }
 
+extension View {
+    @ViewBuilder func capsuleBackground<S: Shape>(in shape: S, interactive: Bool) -> some View {
+        if #available(macOS 26, iOS 26, watchOS 26, tvOS 26, *) {
+            self.glassEffect(.regular.interactive(interactive), in: shape)
+        } else {
+            self.background {
+                Capsule()
+                    .foregroundStyle(.ultraThinMaterial)
+            }
+        }
+    }
+}
+
 // MARK: DayColumnView
 
 struct DayColumnView: View {
@@ -379,6 +416,29 @@ struct DayColumnView: View {
     var day: TimeTableSchedule.TimeTableDay
     @Binding var selectedDay: TimeTableSchedule.Days
     @Binding var addSchedule: Bool
+    
+    func scheduleClassSection(_ item: ScheduleClass) -> some View {
+        Section(timeRangeString(item)) {
+            LessonRow(item: item) {
+                delete(item)
+            }
+#if os(iOS)
+            .listRowBackground(
+                fullColorRow
+                ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
+                : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom)
+            )
+#elseif os(macOS)
+            .padding(25)
+            .background(fullColorRow
+                        ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
+                        : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+                        ignoresSafeAreaEdges: .all
+            )
+            .padding(-25)
+#endif
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -397,18 +457,7 @@ struct DayColumnView: View {
             } else {
                 Form {
                     ForEach(day.classes) { item in
-                        Section(timeRangeString(item)) {
-                            LessonRow(item: item) {
-                                delete(item)
-                            }
-                            #if os(iOS) || os(macOS)
-                            .listRowBackground(
-                                fullColorRow
-                                    ? LinearGradient(colors: [item.lesson.color.opacity(0.25), item.lesson.color.opacity(0.75)], startPoint: .top, endPoint: .bottom)
-                                    : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom)
-                            )
-                            #endif
-                        }
+                        scheduleClassSection(item)
                     }
                     .onDelete { indexSet in
                         delete(at: indexSet)
