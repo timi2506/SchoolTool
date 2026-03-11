@@ -188,24 +188,18 @@ struct ItslearningSafariView: UIViewRepresentable {
     }
 }
 #elseif os(macOS)
-struct ItslearningSafariView: View {
+import WebKit
+struct ItslearningSafariView: NSViewRepresentable {
     let url: URL
 
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "safari")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-            Text("itslearning is ready to open.")
-                .font(.headline)
-            Link(destination: url) {
-                Label("Open in Browser", systemImage: "arrow.up.right.square")
-            }
-            .buttonStyle(.borderedProminent)
-        }
-        .padding()
-        .onAppear {
-            NSWorkspace.shared.open(url)
+    func makeNSView(context: Context) -> WKWebView {
+        WKWebView()
+    }
+
+    func updateNSView(_ webView: WKWebView, context: Context) {
+        let request = URLRequest(url: url)
+        if webView.url != url {
+            webView.load(request)
         }
     }
 }

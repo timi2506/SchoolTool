@@ -2,6 +2,8 @@
 // SchoolTool
 
 import Foundation
+import Combine
+
 #if os(iOS) || os(macOS)
 import AuthenticationServices
 import Security
