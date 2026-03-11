@@ -86,6 +86,9 @@
         }
       }
     },
+    "Accounts" : {
+
+    },
     "Add" : {
       "localizations" : {
         "de" : {
@@ -95,6 +98,9 @@
           }
         }
       }
+    },
+    "Add Account" : {
+
     },
     "Add Feed" : {
 
@@ -149,6 +155,12 @@
       }
     },
     "Article" : {
+
+    },
+    "Authenticating…" : {
+
+    },
+    "Authentication Failed" : {
 
     },
     "Browse for Devices…" : {
@@ -395,6 +407,12 @@
         }
       }
     },
+    "Failed to Load" : {
+
+    },
+    "Failed to Load Sites" : {
+
+    },
     "Feed URL" : {
 
     },
@@ -543,6 +561,12 @@
     "Invalid URL" : {
 
     },
+    "itslearning" : {
+
+    },
+    "itslearning Settings" : {
+
+    },
     "Last Synced" : {
       "localizations" : {
         "de" : {
@@ -586,6 +610,12 @@
         }
       }
     },
+    "Loading itslearning Sites…" : {
+
+    },
+    "Loading itslearning…" : {
+
+    },
     "Loading…" : {
 
     },
@@ -605,6 +635,9 @@
     "Makes SchoolTool treat this Class as a Double Lesson" : {
 
     },
+    "Manage itslearning Accounts" : {
+
+    },
     "Manage syncing to Watch" : {
       "localizations" : {
         "de" : {
@@ -614,6 +647,9 @@
           }
         }
       }
+    },
+    "Manage your itslearning accounts" : {
+
     },
     "Merge" : {
 
@@ -657,6 +693,9 @@
         }
       }
     },
+    "No accounts added yet" : {
+
+    },
     "No Additional Information" : {
       "localizations" : {
         "de" : {
@@ -683,6 +722,9 @@
     "No items found" : {
 
     },
+    "No itslearning Account" : {
+
+    },
     "No messages yet" : {
 
     },
@@ -706,6 +748,9 @@
         }
       }
     },
+    "None" : {
+
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -717,6 +762,12 @@
       }
     },
     "Open Feed URL" : {
+
+    },
+    "Open itslearning Settings" : {
+
+    },
+    "Open with itslearning (%@)" : {
 
     },
     "Page %lld" : {
@@ -811,6 +862,9 @@
         }
       }
     },
+    "Reload" : {
+
+    },
     "Remove Feed" : {
 
     },
@@ -832,6 +886,9 @@
           }
         }
       }
+    },
+    "Retry" : {
+
     },
     "Return ${class}" : {
       "localizations" : {
@@ -969,6 +1026,9 @@
         }
       }
     },
+    "Search for a Site" : {
+
+    },
     "Searching…" : {
 
     },
@@ -1002,6 +1062,9 @@
         }
       }
     },
+    "Select your itslearning Site" : {
+
+    },
     "Send Now" : {
 
     },
@@ -1022,6 +1085,15 @@
 
     },
     "Share your Schedule and Feeds with nearby SchoolTool devices" : {
+
+    },
+    "Sign In" : {
+
+    },
+    "Sign in to itslearning" : {
+
+    },
+    "Sign in to your itslearning account to get started." : {
 
     },
     "Start" : {
@@ -1072,6 +1144,9 @@
           }
         }
       }
+    },
+    "Switch Account" : {
+
     },
     "Symbol" : {
       "localizations" : {
@@ -1201,6 +1276,9 @@
           }
         }
       }
+    },
+    "Try Again" : {
+
     },
     "Tuesday" : {
       "localizations" : {

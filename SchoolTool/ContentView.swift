@@ -25,6 +25,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Feeds", systemImage: "dot.radiowaves.up.forward")
                 }
+            ItslearningTabView()
+                .tabItem {
+                    Label("itslearning", systemImage: "person.badge.key.fill")
+                }
 #endif
 #if os(iOS) || os(tvOS)
             SettingsView()

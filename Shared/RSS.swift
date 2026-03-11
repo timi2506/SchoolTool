@@ -403,6 +403,9 @@ struct FeedItemRow: View {
 struct FeedItemDetailView: View {
     let item: FeedItem
     @Environment(\.dismiss) private var dismiss
+    #if os(iOS) || os(macOS)
+    @StateObject private var accountManager = ItslearningAccountManager.shared
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -437,6 +440,19 @@ struct FeedItemDetailView: View {
                     }
 
                     if let link = item.link {
+                        #if os(iOS) || os(macOS)
+                        if let matchedAccount = accountManager.matchingAccount(for: link) {
+                            ItslearningAuthenticatedLinkView(url: link, account: matchedAccount)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.orange)
+                                )
+                                .foregroundStyle(.white)
+                                .padding(.top, 4)
+                        }
+                        #endif
                         Link(destination: link) {
                             HStack {
                                 Spacer()
