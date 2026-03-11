@@ -254,6 +254,27 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         session.start()
     }
 
+    // MARK: - Network Helper
+
+    /// Executes a URLRequest, logs the response in DEBUG builds, validates the HTTP status code,
+    /// and returns the raw response data. Throws `URLError(.userAuthenticationRequired)` for 401,
+    /// `URLError(.badServerResponse)` for any other non-2xx status.
+    private func performRequest(_ request: URLRequest, context: String) async throws -> Data {
+        #if DEBUG
+        let method = request.httpMethod ?? "GET"
+        print("[Itslearning] \(context) → \(method) \(request.url?.absoluteString ?? "<nil>")")
+        #endif
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+        #if DEBUG
+        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
+        print("[Itslearning] \(context) ← HTTP \(statusCode)\n\(rawBody)")
+        #endif
+        if statusCode == 401 { throw URLError(.userAuthenticationRequired) }
+        guard (200..<300).contains(statusCode) else { throw URLError(.badServerResponse) }
+        return data
+    }
+
     func getToken(code: String, baseURL: String) async throws -> ItslearningToken {
         guard let base = URL(string: baseURL) else { throw URLError(.badURL) }
         let tokenURL = base.appendingPathComponent("restapi/oauth2/token")
@@ -261,15 +282,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         request.httpMethod = "POST"
         request.httpBody = "grant_type=authorization_code&client_id=10ae9d30-1853-48ff-81cb-47b58a325685&code=\(code)".data(using: .utf8)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        #if DEBUG
-        print("[Itslearning] getToken → POST \(tokenURL)")
-        #endif
-        let (data, response) = try await URLSession.shared.data(for: request)
-        #if DEBUG
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
-        print("[Itslearning] getToken ← HTTP \(statusCode)\n\(rawBody)")
-        #endif
+        let data = try await performRequest(request, context: "getToken")
         do {
             return try ItslearningToken(from: data)
         } catch {
@@ -288,15 +301,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         request.httpMethod = "POST"
         request.httpBody = "grant_type=refresh_token&client_id=10ae9d30-1853-48ff-81cb-47b58a325685&refresh_token=\(current.refreshToken)".data(using: .utf8)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        #if DEBUG
-        print("[Itslearning] reAuthToken → POST \(tokenURL)")
-        #endif
-        let (data, response) = try await URLSession.shared.data(for: request)
-        #if DEBUG
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
-        print("[Itslearning] reAuthToken ← HTTP \(statusCode)\n\(rawBody)")
-        #endif
+        let data = try await performRequest(request, context: "reAuthToken")
         do {
             return try ItslearningToken(from: data)
         } catch {
@@ -324,15 +329,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         var request = URLRequest(url: personURL)
         request.setValue("\(tok.tokenType) \(tok.accessToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        #if DEBUG
-        print("[Itslearning] getUser → GET \(personURL)")
-        #endif
-        let (data, response) = try await URLSession.shared.data(for: request)
-        #if DEBUG
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
-        print("[Itslearning] getUser ← HTTP \(statusCode)\n\(rawBody)")
-        #endif
+        let data = try await performRequest(request, context: "getUser")
         do {
             return try JSONDecoder().decode(ItslearningPerson.self, from: data)
         } catch {
@@ -355,15 +352,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         var request = URLRequest(url: endpoint)
         request.setValue("\(tok.tokenType) \(tok.accessToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        #if DEBUG
-        print("[Itslearning] getAuthenticatedURL → GET \(endpoint)")
-        #endif
-        let (data, response) = try await URLSession.shared.data(for: request)
-        #if DEBUG
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
-        print("[Itslearning] getAuthenticatedURL ← HTTP \(statusCode)\n\(rawBody)")
-        #endif
+        let data = try await performRequest(request, context: "getAuthenticatedURL")
         struct SSOResponse: Decodable { let Url: String }
         do {
             let decoded = try JSONDecoder().decode(SSOResponse.self, from: data)
@@ -383,15 +372,7 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         let sitesURL = URL(string: "https://itslearning.itslearning.com/restapi/sites/all/v1/")!
         var request = URLRequest(url: sitesURL)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        #if DEBUG
-        print("[Itslearning] fetchAllSites → GET \(sitesURL)")
-        #endif
-        let (data, response) = try await URLSession.shared.data(for: request)
-        #if DEBUG
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        let rawBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
-        print("[Itslearning] fetchAllSites ← HTTP \(statusCode)\n\(rawBody)")
-        #endif
+        let data = try await performRequest(request, context: "fetchAllSites")
         do {
             let decoded = try JSONDecoder().decode(AllItslearningSitesResponse.self, from: data)
             return decoded.allSites
