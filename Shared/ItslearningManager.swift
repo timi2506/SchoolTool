@@ -263,6 +263,16 @@ class ItslearningAccountManager: NSObject, ObservableObject {
         #if DEBUG
         let method = request.httpMethod ?? "GET"
         print("[Itslearning] \(context) → \(method) \(request.url?.absoluteString ?? "<nil>")")
+        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
+            for (key, value) in headers.sorted(by: { $0.key < $1.key }) {
+                if key.caseInsensitiveCompare("Authorization") == .orderedSame {
+                    let tokenType = value.split(separator: " ").first.map(String.init) ?? "?"
+                    print("[Itslearning] \(context)   \(key): \(tokenType) [token redacted]")
+                } else {
+                    print("[Itslearning] \(context)   \(key): \(value)")
+                }
+            }
+        }
         #endif
         let (data, response) = try await URLSession.shared.data(for: request)
         let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
@@ -347,7 +357,16 @@ class ItslearningAccountManager: NSObject, ObservableObject {
             url: base.appendingPathComponent("restapi/personal/sso/url/v1"),
             resolvingAgainstBaseURL: true
         )
-        components?.queryItems = [URLQueryItem(name: "url", value: url.absoluteString)]
+        // The API docs require a fully "encoded itslearning url" as the query parameter value.
+        // URLComponents.queryItems encodes '=' and '&' but leaves '?' unencoded, which produces
+        // two '?' in the outer request URL and causes the server to reject the request.
+        // We decode first (in case URL already has percent-encoding) then re-encode with '?', '=',
+        // '&' all encoded, then set percentEncodedQuery directly to bypass further re-encoding.
+        var ssoAllowedChars = CharacterSet.urlQueryAllowed
+        ssoAllowedChars.remove(charactersIn: "?=&+#")
+        let rawURLString = url.absoluteString.removingPercentEncoding ?? url.absoluteString
+        let encodedURLString = rawURLString.addingPercentEncoding(withAllowedCharacters: ssoAllowedChars) ?? rawURLString
+        components?.percentEncodedQuery = "url=\(encodedURLString)"
         guard let endpoint = components?.url else { throw URLError(.badURL) }
         var request = URLRequest(url: endpoint)
         request.setValue("\(tok.tokenType) \(tok.accessToken)", forHTTPHeaderField: "Authorization")
